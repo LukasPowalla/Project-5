@@ -21,6 +21,8 @@ public:
     void addplanet(Planet Planet1);
     void setmatrices();
     void VelocityVerlet(double dt,int n);
+    void RungeKuttamethod(double dt,int n);
+    mat calculateForces( Mat<double> B);
     void calculateForces();
 };
 

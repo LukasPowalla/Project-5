@@ -21,9 +21,10 @@ int main()
     mysystem.addplanet(p1);
     mysystem.addplanet(p2);
     mysystem.VelocityVerlet(0.001,1000);
+    //mysystem.RungeKuttamethod(0.001,1000);
 }
 
-// RK4 set matrices in beginning
+
 
 
 //two bodys at the moment -old coldefragment - probabely used later
