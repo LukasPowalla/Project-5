@@ -20,13 +20,13 @@ void solarsystem::addplanet(Planet Planet1){
 
 void solarsystem::VelocityVerlet(double dt,int n){
     setmatrices();
-    calculateForces(); //this might be shit
-    A.col(1)=A.col(1)+0.5*dt*dA.col(1);
+    calculateForces();                               //explonation of the algorithm
+    A.col(1)=A.col(1)+0.5*dt*dA.col(1);              // v(t)->v(t+0.5dt)
     for(int k=0;k<n;k++){
-        A.col(0)=A.col(0)+A.col(1)*dt;      // r(t+dt)
-        calculateForces();                  // a(t+dt)
-        A.col(1)=A.col(1)+dt*dA.col(1); // v(t+0.5dt) -> v(t+3/2dt)
-        cout<<endl<<A(3,0)<<"  "<<A(4,0)<<endl;
+        A.col(0)=A.col(0)+A.col(1)*dt;               // r(t+dt)
+        calculateForces();                           // a(t+dt)
+        A.col(1)=A.col(1)+dt*dA.col(1);              // v(t+0.5dt) -> v(t+3/2dt)
+       cout<<endl<<A(3,0)<<"  "<<A(4,0)<<"  "<<k<<endl;
         for(int i=0;i<planets.size();i+=1){
             for(int j=0;j<3;j++){
                 planets[i].position[j]=A(3*i+j,0);
@@ -36,6 +36,11 @@ void solarsystem::VelocityVerlet(double dt,int n){
     }
 
 }
+
+// the function setmatrices initialises the matrix A and dA, which contains all necessary information about all of the planets
+// dA=(d/dt)A -> this means that A contains: A=[positioncomponents of all planets;velocitycomponents of all planets]
+// and dA contains: dA=[velocitycomponents of all planets;accelerationcomponents of all planets]
+// This is very useful for RK4; However I also use it for Velocityverlet
 void solarsystem::setmatrices(){
     A=Mat<double>(planets.size()*3,2);
     dA=Mat<double>(planets.size()*3,2);
@@ -55,7 +60,8 @@ void solarsystem::setmatrices(){
     }
 }
 
-
+// the function calculateForces recalculates the Forces of the actual constellation of planets
+// the function calculateForces dates up the matrix dA as well as the planet objects
 void solarsystem::calculateForces(){
     double G=4*M_PI*M_PI; // referred to the earths solar system
 
@@ -74,7 +80,7 @@ void solarsystem::calculateForces(){
             double Fx=(G*(planets[i].m)*(planets[j].m)*dx)/pow(dr2,1.5);
             double Fy=(G*(planets[i].m)*(planets[j].m)*dy)/pow(dr2,1.5);
             double Fz=(G*(planets[i].m)*(planets[j].m)*dz)/pow(dr2,1.5);
-            //update planet properties (not necessary)
+            //update planet properties
             planets[i].force[0]-=Fx;
             planets[j].force[0]+=Fx;
             planets[i].force[1]-=Fy;
@@ -83,7 +89,7 @@ void solarsystem::calculateForces(){
             planets[j].force[2]+=Fz;
         }
     }
-
+    //update the matrix dA
     for(int i=0;i<planets.size();i+=1){
         for(int j=0;j<3;j++){
             dA(3*i+j,0)=planets[i].velocity[j];
@@ -94,12 +100,12 @@ void solarsystem::calculateForces(){
 }
 
 //This will be useful by RK 4 algorithm
-
-mat solarsystem::calculateForces( Mat<double> B){
+// the function derivate returns the derivation of B
+mat solarsystem::derivate( Mat<double> B){
     double G=4*M_PI*M_PI; // referred to the earths solar system
     int n=planets.size();
     Mat<double> dC;
-    dC=Mat<double>(n*3,2);
+    dC=Mat<double>(n*3,2,fill::zeros);
     for(int i=0;i<n;i++){
         for(int j=i+1;j<n;j++){
             double dx=B(3*i,0)-B(3*j,0);
@@ -116,7 +122,13 @@ mat solarsystem::calculateForces( Mat<double> B){
             dC(3*i+1,1)-=Fy;
             dC(3*j+1,1)+=Fy;
             dC(3*i+2,1)-=Fz;
-            dC(3*j+2,1)+=Fz;//returen dC with v from B and new Forces
+            dC(3*j+2,1)+=Fz;//returen dC with v from B and new acceleration
+        }
+    }
+    for(int i=0;i<n;i+=1){
+        for(int j=0;j<3;j++){
+            dC(3*i+j,1)=dC(3*i+j,1)/planets[i].m;
+           // cout << dC/planets[i].m<<endl;
         }
     }
     dC.col(0)=B.col(1);
@@ -132,12 +144,11 @@ void solarsystem::RungeKuttamethod(double dt,int n){
     k3=Mat<double>(size*3,2);
     k4=Mat<double>(size*3,2);
     for(int i=0;i<n;i++){
-        k1=calculateForces(A);
-        k2=calculateForces(A+k1*(dt/2));
-        k3=calculateForces(A+k2*(dt/2));
-        k4=calculateForces(A+k3*dt);
-        A=A+(1/6)*(k1+2*k2+2*k3+k4)*dt;
-        //cout << A<<endl;
-        //cout << A(3,0)<<"  "<<A(4,0)<<endl;
+        k1=derivate(A);
+        k2=derivate(A+k1*(dt/2));
+        k3=derivate(A+k2*(dt/2));
+        k4=derivate(A+k3*dt);
+        A=A+(1.0/6.0)*(k1+2*k2+2*k3+k4)*dt;
+    //    cout << A(3,0)<<"  "<<A(4,0)<<"  "<<i<<endl;
     }
 }
