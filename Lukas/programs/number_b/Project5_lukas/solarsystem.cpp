@@ -1,6 +1,7 @@
 #include "solarsystem.h"
 #include "planet.h"
 #include <iostream>
+#include <fstream>
 #include <armadillo>
 #include <stdio.h>
 #include <iomanip>
@@ -19,6 +20,10 @@ void solarsystem::addplanet(Planet Planet1){
 }
 
 void solarsystem::VelocityVerlet(double dt,int n){
+    //print file
+    ofstream planetpositionVerlet;
+      planetpositionVerlet.open ("planetposition_verlet.txt");
+      planetpositionVerlet << "r_x          r_y         r_z         t ";
     setmatrices();
     calculateForces();                               //explonation of the algorithm
     A.col(1)=A.col(1)+0.5*dt*dA.col(1);              // v(t)->v(t+0.5dt)
@@ -28,13 +33,15 @@ void solarsystem::VelocityVerlet(double dt,int n){
         A.col(1)=A.col(1)+dt*dA.col(1);              // v(t+0.5dt) -> v(t+3/2dt)
        cout<<endl<<A(3,0)<<"  "<<A(4,0)<<"  "<<k<<endl;
         for(int i=0;i<planets.size();i+=1){
+            planetpositionVerlet<<endl;
             for(int j=0;j<3;j++){
                 planets[i].position[j]=A(3*i+j,0);
                 planets[i].velocity[j]=A(3*i+j,1);
+                planetpositionVerlet<<A(3*i+j,0)<<"  ";
             }
         }
     }
-
+    planetpositionVerlet.close();
 }
 
 // the function setmatrices initialises the matrix A and dA, which contains all necessary information about all of the planets

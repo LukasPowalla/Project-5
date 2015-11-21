@@ -4,8 +4,8 @@
  * */
 
 #include <iostream>
-#include <cmath>
 #include <fstream>
+#include <cmath>
 #include "planet.h"
 #include "solarsystem.h"
 #include <armadillo>
