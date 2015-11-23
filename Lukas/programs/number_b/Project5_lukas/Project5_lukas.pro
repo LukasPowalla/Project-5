@@ -5,9 +5,11 @@ CONFIG -= qt
 
 SOURCES += main.cpp \
     planet.cpp \
-    solarsystem.cpp
+    solarsystem.cpp \
+    random.cpp
 
 HEADERS += \
     planet.h \
-    solarsystem.h
+    solarsystem.h \
+    random.h
 

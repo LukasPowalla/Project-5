@@ -25,6 +25,7 @@ public:
     void RungeKuttamethod(double dt,int n);
     mat derivate( Mat<double> B);
     void calculateForces();
+    void addrandomplanet(double R_0);
 };
 
 #endif // SOLARSYSTEM_H

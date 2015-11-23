@@ -1,3 +1,4 @@
+#include "random.h"
 #include "solarsystem.h"
 #include "planet.h"
 #include <iostream>
@@ -21,9 +22,9 @@ void solarsystem::addplanet(Planet Planet1){
 
 void solarsystem::VelocityVerlet(double dt,int n){
     //print file
-    ofstream planetpositionVerlet;
-      planetpositionVerlet.open ("planetposition_verlet.txt");
-      planetpositionVerlet << "r_x          r_y         r_z         t ";
+    //ofstream planetpositionVerlet;
+    // planetpositionVerlet.open ("planetposition_verlet.txt");
+    // planetpositionVerlet << "r_x          r_y         r_z         t ";
     setmatrices();
     calculateForces();                               //explonation of the algorithm
     A.col(1)=A.col(1)+0.5*dt*dA.col(1);              // v(t)->v(t+0.5dt)
@@ -31,17 +32,17 @@ void solarsystem::VelocityVerlet(double dt,int n){
         A.col(0)=A.col(0)+A.col(1)*dt;               // r(t+dt)
         calculateForces();                           // a(t+dt)
         A.col(1)=A.col(1)+dt*dA.col(1);              // v(t+0.5dt) -> v(t+3/2dt)
-       cout<<endl<<A(3,0)<<"  "<<A(4,0)<<"  "<<k<<endl;
+        //cout<<endl<<A(3,0)<<"  "<<A(4,0)<<"  "<<k<<endl;
         for(int i=0;i<planets.size();i+=1){
-            planetpositionVerlet<<endl;
+            //planetpositionVerlet<<endl;
             for(int j=0;j<3;j++){
                 planets[i].position[j]=A(3*i+j,0);
                 planets[i].velocity[j]=A(3*i+j,1);
-                planetpositionVerlet<<A(3*i+j,0)<<"  ";
+                //planetpositionVerlet<<A(3*i+j,0)<<"  ";
             }
         }
     }
-    planetpositionVerlet.close();
+    //planetpositionVerlet.close();
 }
 
 // the function setmatrices initialises the matrix A and dA, which contains all necessary information about all of the planets
@@ -135,7 +136,7 @@ mat solarsystem::derivate( Mat<double> B){
     for(int i=0;i<n;i+=1){
         for(int j=0;j<3;j++){
             dC(3*i+j,1)=dC(3*i+j,1)/planets[i].m;
-           // cout << dC/planets[i].m<<endl;
+            // cout << dC/planets[i].m<<endl;
         }
     }
     dC.col(0)=B.col(1);
@@ -150,12 +151,31 @@ void solarsystem::RungeKuttamethod(double dt,int n){
     k2=Mat<double>(size*3,2);
     k3=Mat<double>(size*3,2);
     k4=Mat<double>(size*3,2);
+    //ofstream RungeKutta_position;
+    //RungeKutta_position.open("Rungekuttaposition.txt");
     for(int i=0;i<n;i++){
         k1=derivate(A);
         k2=derivate(A+k1*(dt/2));
         k3=derivate(A+k2*(dt/2));
         k4=derivate(A+k3*dt);
         A=A+(1.0/6.0)*(k1+2*k2+2*k3+k4)*dt;
-    //    cout << A(3,0)<<"  "<<A(4,0)<<"  "<<i<<endl;
+        //RungeKutta_position << A(3,0)<<"  "<<A(4,0)<<"  "<<i<<endl;
     }
+    //RungeKutta_position.close();
+}
+
+void addrandomplanet(double R_0){
+    Planet randomplanet;
+    // assume random_1 to be uniform distributed between 0 and 1
+    double random_1,random_mass_gaussian;
+    randomplanet.m=random_mass_gaussian;
+
+    randomplanet.velocity[0]=0;
+    randomplanet.velocity[1]=0;
+    randomplanet.velocity[2]=0;
+
+    randomplanet.position[0]=R_0*pow(random_1,(1.0/3.0))*pow((1-2*random_1)*(1-2*random_1),0.5)*cos(2*M_PI*random_1);
+    randomplanet.position[0]=R_0*pow(random_1,(1.0/3.0))*pow((1-2*random_1)*(1-2*random_1),0.5)*sin(2*M_PI*random_1);
+    randomplanet.position[0]=R_0*pow(random_1,(1.0/3.0))*(1-2*random_1);
+
 }
