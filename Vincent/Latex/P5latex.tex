@@ -1,0 +1,201 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{makeidx}
+\usepackage{graphicx}
+\usepackage{fourier}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\author{Johannes Scheller, Vincent Noculak, Lukas Powalla, Richard Asbah}
+\title{Computational Physics - Project 4}
+
+\lstset{language=C++,
+	keywordstyle=\bfseries\color{blue},
+	commentstyle=\itshape\color{red},
+	stringstyle=\color{green},
+	identifierstyle=\bfseries,
+	frame=single}
+\begin{document}
+
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+
+
+\section{Introduction}
+
+In this project we are going to simulate open clusters using Newton's law of universal gravitation. We are going to look at the time an open cluster with a cold collapse would need to collapse into singularity and observe the energy conservation and distribution of potential and kinetic energy. On what properties does it depend how many particles get ejected from the cluster and how do those particles change the energy of the system? The equilibrium state and its radial partial density are going to be observed too.
+
+We are doing these calculation by using the Velocity Verlet algorithm and the fourth order Runge-Kutta method. First we are going to compare both algorithms by simulating a to body system. Then we are going to study, which algorithm is more suitable for doing open cluster simulations and continue to simulate the open cluster with the more fitting algorithm.
+
+\section{Theory}
+
+\subsection{Newton's law of universal gravitation}
+
+Newton's law of universal gravitation states that every point mass attracts every single other point mass by a force pointing along the line intersecting both points. The force two points of mass with the masses $m_1$ and $m_2$ and a distance of $r$ to each other attract each other is given by
+
+\begin{equation}	
+\label{eq:gra}
+\mathbf{F_G} = G \frac{m_1 \cdot m_2}{r^3} \cdot \mathbf{r}
+\end{equation}
+
+Where $G$ is the gravitational constant. In our project we have a system with $n$ stars which get approximated as points of mass. Hence, to get the gravitational force acting on one star, we just need to sum over all $\mathbf{F}_G$'s (having the form of equation \eqref{eq:gra}) that are acting on this star due to the other stars.
+
+\begin{equation}	
+\label{eq:gra2}
+\mathbf{F}_{Gi} = \sum_{j \neq i}^{n}G \frac{m_i \cdot m_j}{r_{ij}^3} \cdot \mathbf{r}_{ij} = G m_i \sum_{j \neq i}^{n} m_j \frac{\mathbf{r}_{ij}}{r_{ij}^3}
+\end{equation}
+
+Then the acceleration of star $i$ is given by
+
+\begin{equation}	
+\label{eq:gra3}
+\mathbf{a} = G \sum_{j \neq i}^{n} m_j \frac{\mathbf{r}_{ij}}{r_{ij}^3}
+\end{equation}
+
+\subsection{Open Clusters}
+
+Open clusters are groups of a few thousand stars that were formed from the same giant molecular cloud and have roughly the same age. They have yet only been found in spiral and irregular galaxies, in which active star formation is occurring.
+Many open clusters ate unstable and have a small enough mass that the escape velocity of the system is lower than the average velocity of the constituent stars. These clusters will rapidly disperse within a few million years\footnote{Source: \url{https://en.wikipedia.org/wiki/Open_cluster}}.
+
+The open cluster we simulate in this project will have the starting conditions of a cold collapse. This means, that the particles start with little or no initial velocity. In addition to the that, the $N$ particles, we simulate, will be uniformly distributed at the starting time inside a sphere with given radius $R_0$. Our particles masses will be distributed by a Gaussian distribution around ten solar masses with a standard deviation of one solar mass.
+
+\subsection{Verlet algorithm}
+
+The Verlet algorithm is one method that is important for this project to numerically solve the equation of motion having the form of equation \eqref{eq:gra2}. 
+
+Using a taylor expansion for a function $x(t)$ around the point $t_0 = t_i$ and then setting $t = t_i + h$ and $t = t_i - h$, we get the equations
+
+\begin{equation}
+\label{v1}
+x(t_i + h) = x_i + h  x^{'}(t_i) + \frac{h^2}{2}  x^{''}(t_i) + \frac{h^3}{3!}  x^{'''}(t_i) + \sigma (h^4)
+\end{equation}
+\begin{equation}
+\label{v2}
+x(t_i - h) = x_i - h  x^{'}(t_i) + \frac{h^2}{2}  x^{''}(t_i) - \frac{h^3}{3!}  x^{'''}(t_i) + \sigma (h^4)
+\end{equation}
+
+For an easier overview it is useful to use the notation $x(t_i) = x_i$, $x(t_i \pm h) = x_{i \pm 1}$ and $x^{''} = a(x, t)$. By adding up equation equation \eqref{v1} and \eqref{v2} we come to the equation
+
+\begin{equation}
+\label{v3}
+	x_{i+1} = 2 x_i - x_{i-1} + a(x_i, t_i) \cdot h^2 + \sigma(h^4)
+\end{equation}
+
+Which gives us a method to determine all $x_i$, if the boundary conditions are known. It can be seen that due to the $x_{i-1}$ part, the algorithm is not self-starting. Hence $x_1$ must be found, using an other method (for example Euler's method).
+
+\subsubsection{Velocity Verlet algorithm}
+
+The Velocity Verlet is similar to the Verlet algorithm. Here we use the Taylor expansion with $t_0 = t_i$ and $t = t_i + h$ to get the formula: 
+
+\begin{equation}
+\label{vv1}
+x_{i+1} = x_i + h \cdot v_i + \frac{h^2}{2}  a_i(x_i, t_i) + \sigma (h^3)
+\end{equation}
+
+With $v(t) = \frac{dx}{dt}$. And we use the Trapezoidal rule to get the formula:
+
+\begin{equation}
+\label{vv2}
+v_{i+1} = v_i + \frac{h}{2} \cdot (a(x_i, t_i) + a(x_{i+1}, t_{i+1})) + \sigma(h^2)
+\end{equation}
+
+The algorithm starts with calculating equation \eqref{vv1} for $i = 0$ to get $x_{i+1}$. With this value, $a(x_i, t_i)$ and $a(x_{i+1}, t_{i+1})$ can be calculated. Then it is possible to calculate $v_{i+1}$ with equation \eqref{vv2}. These steps can now be repeated for $i = i+1$, allowing to get the values for all $x_i$ and $v_i$.
+
+\subsection{Runge-Kutta methods}
+
+Runge-Kutta methods use the following basic equation of integration to numerically approximate Ordinary differential equations.
+
+\begin{equation}
+\label{rc1}
+x_{i+1} = x_i + \int_{t_i}^{t_{i+1}} dt^{'} v(x, t^{'})
+\end{equation}
+
+With $x(t_i) = x_i$, $x(t_i \pm h) = x_{i \pm 1}$ and $\frac{dx}{dt} = v$. The integral can be approximated using numerically integration methods, as for example the trapezoidal rule or Simpson's rule. In Runge-Kutta methods to calculate a step $x_{i+1}$, an intermediate step between $x_i$ and $x_{i+1}$ gets used.
+
+\subsubsection{fourth order Runge-Kutta method (RK4)}
+\label{subsubsec:rc4}
+
+In this project we are going to use the fourth order Runge-Kutta method. This method solves the integral in equation \eqref{rc1} with help of simpson's method. By applying this method we get
+
+\begin{equation}
+\label{rc2}
+\int_{t_i}^{t_{i+1}} dt^{'} v(t^{'}, x) = \frac{h}{6} [v(t_i, x_i) +4 v(t_{i+\frac{1}{2}}, x_{i+\frac{1}{2}}) + v(t_{i+1}, x_{i+1})] + \sigma(h^5)
+\end{equation}
+
+By setting \eqref{rc2} in \eqref{rc1}:
+
+\begin{equation}
+\label{rc3}
+x_{i+1} = x_i + \frac{h}{6} [v(t_i, x_i) + 2 v(t_{i+\frac{1}{2}}, x_{i+\frac{1}{2}}) + 2 v(t_{i+\frac{1}{2}}, x_{i+\frac{1}{2}}) + v(t_{i+1}, x_{i+1})] + \sigma(h^5)
+\end{equation}
+
+$x_{i+\frac{1}{2}}$ and $x_{i+1}$ are unknown values. Now we define $k_1 = v(t_i, x_i)$, first approximate $x_{i+\frac{1}{2}}$ with Euler's method
+
+\begin{equation}
+\label{s:rc4}
+x_{i+\frac{1}{2}} \approx x_i + \frac{h}{2} v(t_i, x_i) = x_i + \frac{h}{2} k_1
+\end{equation}
+
+and define
+
+\begin{equation}
+\label{rc5}
+k_2 = v(t_{i+\frac{1}{2}}, x_i + \frac{h}{2} k_1)
+\end{equation}
+
+Next we calculate $x_{i + \frac{1}{2}}$ with Eulers's method using $k_2$ instead of $k_1$ and then define
+
+\begin{equation}
+\label{rc6}
+k_3 =  v(t_{i+\frac{1}{2}}, x_i+\frac{h}{2} k_2)
+\end{equation}
+
+We predict $x_{i+1}$ with $k_3$ using Euler's method
+
+\begin{align}
+x_{i+1} = x_i + h k_3 \\
+k_4 = v(t_{i+1}, x_i + h k_3)
+\end{align}
+
+Now we can calculate our final $x_{i+1}$ by inserting our $k_j$'s in equation \eqref{rc3}.
+
+\begin{equation}
+\label{rc9}
+x_{i+1} =  x_i + \frac{h}{6} (k_1 + 2 k_2 + 2 k_3 + k_4) + \sigma(h^5)
+\end{equation}
+
+\subsubsection{RK4 in this Project}
+
+In section \ref{subsubsec:rc4} it could be seen, that with the fourth order Runge-Kutta method, first-order ODE's (ordinary differential equations) can be solved. In this project however, we need to numerically solve the equation of motion for multiple particles, which is a second-order ODE (see equation \eqref{eq:gra3}). This ODE can be split up into two first-order ODE's by writing
+
+\begin{align}
+\frac{d\mathbf{r}}{dt} = \mathbf{v}  \\
+\frac{d\mathbf{v}}{dt} = G \sum_{j \neq i}^{n} m_j \frac{\mathbf{r}_{ij}}{r_{ij}^3}
+\end{align}
+
+Now we can use the RK4 method $\mathbf{r}$ and $\mathbf{v}$ simultaneously. Because we use this method in three dimensions and the fact, that we have a second-order ODE, the equations for the RK4 method look different than in section \ref{subsubsec:rc4}. The following steps give in the right order, how to approach the system, when we do a numerically calculation from the time $t_i$ to $t_{i+1}$. It has to be noted, that when we do a calculation for one particle, directly after it, the same time the calculation gets performed for the other particles. The index on the upper left side refer to the number of the particle and the index on the upper right side gives the information, if the value is belogs to the RK4 method for the location or the velocity.
+
+\begin{align}
+\label{rc11}
+\mathbf{k}_1^r = \mathbf{v}_i \\
+\mathbf{k}_{1}^{v} = \mathbf{a}({}^{1}\mathbf{r}_i, {}^{2}\mathbf{r}_i,..., {}^{N}\mathbf{r}_i) \\
+\mathbf{k}_2^r = \mathbf{v}_i + \frac{h}{2} \mathbf{k}_1^{v}	\\
+\mathbf{k}_2^{v} = \mathbf{a}({}^{1}\mathbf{r}_i + \frac{h}{2}\cdot {}^{1}\mathbf{k}_1^r, {}^{2}\mathbf{r}_i + \frac{h}{2}\cdot {}^{2}\mathbf{k}_1^r,..., {}^{N}\mathbf{r}_i + \frac{h}{2}\cdot {}^{N}\mathbf{k}_1^r)	\\
+\mathbf{k}_3^r = \mathbf{v}_i + \frac{h}{2} \mathbf{k}_2^v	\\
+\mathbf{k}_3^{v} = \mathbf{a}({}^{1}\mathbf{r}_i + \frac{h}{2}\cdot {}^{1}\mathbf{k}_2^r, {}^{2}\mathbf{r}_i + \frac{h}{2}\cdot {}^{2}\mathbf{k}_2^r,..., {}^{N}\mathbf{r}_i + \frac{h}{2}\cdot {}^{N}\mathbf{k}_2^r)	\\
+\mathbf{k}_4^r = \mathbf{v}_i + h \cdot \mathbf{k}_3^v	\\
+\label{rc12}
+\mathbf{k}_4^{v} = \mathbf{a}({}^{1}\mathbf{r}_i + h\cdot {}^{1}\mathbf{k}_3^r, {}^{2}\mathbf{r}_i + h\cdot {}^{2}\mathbf{k}_3^r,..., {}^{N}\mathbf{r}_i + h\cdot {}^{N}\mathbf{k}_3^r)
+\end{align}
+
+The accelerations can always get calculated by using equation \eqref{eq:gra3}. After the steps of equations \eqref{rc11} to \eqref{rc12} are executed, the velocity and positions of the particles for the time $t_{i+1}$ can be calculated using formula \eqref{rc9}.
+
+\end{document}
