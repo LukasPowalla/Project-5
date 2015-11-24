@@ -165,17 +165,31 @@ void solarsystem::RungeKuttamethod(double dt,int n){
 }
 
 void addrandomplanet(double R_0){
+//--------------------this must be defiend only once or you get the same random number (i don't know where u define M_PI but u need to define these in the same place)
+    //double M_PI = 1;
+    double mean = 1.0;
+    double standardDeviation = 0.5;
+
+    time_t start, finish, seed;
+        seed = time(NULL);
+        long idum;
+        idum = -((long)seed);
+        vector<Random*> randoms;
+        randoms.push_back(new Random(seed));
+ //--------------------------------------------------------
+
+
     Planet randomplanet;
     // assume random_1 to be uniform distributed between 0 and 1
     double random_1,random_mass_gaussian;
-    randomplanet.m=random_mass_gaussian;
+    randomplanet.m=randoms[0]->nextGauss(mean, standardDeviation);
 
     randomplanet.velocity[0]=0;
     randomplanet.velocity[1]=0;
     randomplanet.velocity[2]=0;
 
-    randomplanet.position[0]=R_0*pow(random_1,(1.0/3.0))*pow((1-2*random_1)*(1-2*random_1),0.5)*cos(2*M_PI*random_1);
-    randomplanet.position[0]=R_0*pow(random_1,(1.0/3.0))*pow((1-2*random_1)*(1-2*random_1),0.5)*sin(2*M_PI*random_1);
-    randomplanet.position[0]=R_0*pow(random_1,(1.0/3.0))*(1-2*random_1);
+    randomplanet.position[0]=R_0*pow(randoms[0]->nextDouble(),(1.0/3.0))*pow((1-2*randoms[0]->nextDouble())*(1-2*randoms[0]->nextDouble()),0.5)*cos(2*M_PI*randoms[0]->nextDouble());
+    randomplanet.position[0]=R_0*pow(randoms[0]->nextDouble(),(1.0/3.0))*pow((1-2*randoms[0]->nextDouble())*(1-2*randoms[0]->nextDouble()),0.5)*sin(2*M_PI*randoms[0]->nextDouble());
+    randomplanet.position[0]=R_0*pow(randoms[0]->nextDouble(),(1.0/3.0))*(1-2*randoms[0]->nextDouble());
 
 }
