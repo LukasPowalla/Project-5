@@ -1,0 +1,9 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Theory}{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{Newton's law of universal gravitation}{section.2}% 3
+\BOOKMARK [2][-]{subsection.2.2}{Open Clusters}{section.2}% 4
+\BOOKMARK [2][-]{subsection.2.3}{Verlet algorithm}{section.2}% 5
+\BOOKMARK [3][-]{subsubsection.2.3.1}{Velocity Verlet algorithm}{subsection.2.3}% 6
+\BOOKMARK [2][-]{subsection.2.4}{Runge-Kutta methods}{section.2}% 7
+\BOOKMARK [3][-]{subsubsection.2.4.1}{fourth order Runge-Kutta method \(RK4\)}{subsection.2.4}% 8
+\BOOKMARK [3][-]{subsubsection.2.4.2}{RK4 in this Project}{subsection.2.4}% 9
