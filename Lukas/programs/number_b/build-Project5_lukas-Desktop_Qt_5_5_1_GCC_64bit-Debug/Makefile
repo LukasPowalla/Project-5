@@ -51,11 +51,11 @@ OBJECTS_DIR   = ./
 SOURCES       = ../Project5_lukas/main.cpp \
 		../Project5_lukas/planet.cpp \
 		../Project5_lukas/solarsystem.cpp \
-		../Project5_lukas/random.cpp 
+		../Project5_lukas/gaussian_random.cpp 
 OBJECTS       = main.o \
 		planet.o \
 		solarsystem.o \
-		random.o
+		gaussian_random.o
 DIST          = /home/lukas/Qt/5.5/gcc_64/mkspecs/features/spec_pre.prf \
 		/home/lukas/Qt/5.5/gcc_64/mkspecs/common/unix.conf \
 		/home/lukas/Qt/5.5/gcc_64/mkspecs/common/linux.conf \
@@ -187,10 +187,10 @@ DIST          = /home/lukas/Qt/5.5/gcc_64/mkspecs/features/spec_pre.prf \
 		/home/lukas/Qt/5.5/gcc_64/mkspecs/features/lex.prf \
 		../Project5_lukas/Project5_lukas.pro planet.h \
 		solarsystem.h \
-		random.h ../Project5_lukas/main.cpp \
+		gaussian_random.h ../Project5_lukas/main.cpp \
 		../Project5_lukas/planet.cpp \
 		../Project5_lukas/solarsystem.cpp \
-		../Project5_lukas/random.cpp
+		../Project5_lukas/gaussian_random.cpp
 QMAKE_TARGET  = Project5_lukas
 DESTDIR       = #avoid trailing-slash linebreak
 TARGET        = Project5_lukas
@@ -533,8 +533,8 @@ solarsystem.o: ../Project5_lukas/solarsystem.cpp ../Project5_lukas/solarsystem.h
 		../Project5_lukas/planet.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o solarsystem.o ../Project5_lukas/solarsystem.cpp
 
-random.o: ../Project5_lukas/random.cpp ../Project5_lukas/random.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o random.o ../Project5_lukas/random.cpp
+gaussian_random.o: ../Project5_lukas/gaussian_random.cpp ../Project5_lukas/gaussian_random.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o gaussian_random.o ../Project5_lukas/gaussian_random.cpp
 
 ####### Install
 

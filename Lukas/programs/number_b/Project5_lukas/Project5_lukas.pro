@@ -6,10 +6,10 @@ CONFIG -= qt
 SOURCES += main.cpp \
     planet.cpp \
     solarsystem.cpp \
-    random.cpp
+    gaussian_random.cpp
 
 HEADERS += \
     planet.h \
     solarsystem.h \
-    random.h
+    gaussian_random.h
 

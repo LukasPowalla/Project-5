@@ -1,19 +1,20 @@
-#include "random.h"
 #include "solarsystem.h"
 #include "planet.h"
+#include "gaussian_random.h"
 #include <iostream>
 #include <fstream>
 #include <armadillo>
 #include <stdio.h>
 #include <iomanip>
 #include <cmath>
+#include <random>
+
 
 using namespace arma;
 using namespace std;
 
-solarsystem::solarsystem()
+solarsystem::solarsystem() : gen(this->rd()), dis(0,1)
 {
-
 }
 
 void solarsystem::addplanet(Planet Planet1){
@@ -52,14 +53,14 @@ void solarsystem::VelocityVerlet(double dt,int n){
 void solarsystem::setmatrices(){
     A=Mat<double>(planets.size()*3,2);
     dA=Mat<double>(planets.size()*3,2);
-
+    
     for(int i=0;i<planets.size();i+=1){
         for(int j=0;j<3;j++){
             A(3*i+j,0)=planets[i].position[j];
             A(3*i+j,1)=planets[i].velocity[j];
         }
     }
-
+    
     for(int i=0;i<planets.size();i+=1){
         for(int j=0;j<3;j++){
             dA(3*i+j,0)=planets[i].velocity[j];
@@ -72,7 +73,7 @@ void solarsystem::setmatrices(){
 // the function calculateForces dates up the matrix dA as well as the planet objects
 void solarsystem::calculateForces(){
     double G=4*M_PI*M_PI; // referred to the earths solar system
-
+    
     for(int k=0;k<planets.size();k++){
         for(int l=0;l<3;l++){
             planets[k].force[l]=0;
@@ -104,7 +105,7 @@ void solarsystem::calculateForces(){
             dA(3*i+j,1)=planets[i].force[j]/planets[i].m;
         }
     }
-
+    
 }
 
 //This will be useful by RK 4 algorithm
@@ -164,32 +165,16 @@ void solarsystem::RungeKuttamethod(double dt,int n){
     //RungeKutta_position.close();
 }
 
-void addrandomplanet(double R_0){
-//--------------------this must be defiend only once or you get the same random number (i don't know where u define M_PI but u need to define these in the same place)
-    //double M_PI = 1;
-    double mean = 1.0;
-    double standardDeviation = 0.5;
-
-    time_t start, finish, seed;
-        seed = time(NULL);
-        long idum;
-        idum = -((long)seed);
-        vector<Random*> randoms;
-        randoms.push_back(new Random(seed));
- //--------------------------------------------------------
-
-
+void solarsystem::addrandomplanet(double R_0){
     Planet randomplanet;
-    // assume random_1 to be uniform distributed between 0 and 1
-    double random_1,random_mass_gaussian;
-    randomplanet.m=randoms[0]->nextGauss(mean, standardDeviation);
-
+    randomplanet.m=object.generateGaussianNoise(10,1);
+    
     randomplanet.velocity[0]=0;
     randomplanet.velocity[1]=0;
     randomplanet.velocity[2]=0;
-
-    randomplanet.position[0]=R_0*pow(randoms[0]->nextDouble(),(1.0/3.0))*pow((1-2*randoms[0]->nextDouble())*(1-2*randoms[0]->nextDouble()),0.5)*cos(2*M_PI*randoms[0]->nextDouble());
-    randomplanet.position[0]=R_0*pow(randoms[0]->nextDouble(),(1.0/3.0))*pow((1-2*randoms[0]->nextDouble())*(1-2*randoms[0]->nextDouble()),0.5)*sin(2*M_PI*randoms[0]->nextDouble());
-    randomplanet.position[0]=R_0*pow(randoms[0]->nextDouble(),(1.0/3.0))*(1-2*randoms[0]->nextDouble());
-
+    
+    randomplanet.position[0]=R_0*pow(dis(gen),(1.0/3.0))*sqrt((1-(pow(1-2*dis(gen),2))))*cos(2*M_PI*dis(gen));
+    randomplanet.position[1]=R_0*pow(dis(gen),(1.0/3.0))*sqrt((1-(pow(1-2*dis(gen),2))))*sin(2*M_PI*dis(gen));
+    randomplanet.position[2]=R_0*pow(dis(gen),(1.0/3.0))*(1-(2*dis(gen)));
+    addplanet(randomplanet);
 }

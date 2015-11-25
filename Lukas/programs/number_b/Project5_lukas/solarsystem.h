@@ -1,6 +1,7 @@
 #ifndef SOLARSYSTEM_H
 #define SOLARSYSTEM_H
 #include "planet.h"
+#include "gaussian_random.h"
 #include <armadillo>
 #include <stdio.h>
 #include <iomanip>
@@ -18,6 +19,10 @@ public:
     vector<Planet> planets;
     Mat<double> A;
     Mat<double> dA;
+    std::random_device rd;
+    std::mt19937 gen;
+    std::uniform_real_distribution<> dis;
+    gaussian_random object;
 
     void addplanet(Planet Planet1);
     void setmatrices();
