@@ -1,5 +1,5 @@
-plot [-1:1][-1:1] "Rungekuttaposition.txt" using 1:2 title "movement of planet2 around planet1 ,m=1,vy=2,rx=1" with lines
-replot "Rungekuttaposition.txt" using 3:4 title "movement of p1 around p2,m=1,vy=-2,rx=-1; dt=0.001;n=1000 " with lines
+plot [-3:3][-3:3] "Rungekuttaposition.txt" using 1:2 title "planet2" with lines
+replot "Rungekuttaposition.txt" using 3:4 title "planet1 " with lines
 	set xlabel "x-position" 
  	set ylabel "y-position " 
 	set term png 

@@ -145,8 +145,8 @@ void rungeKuttaMethod(Planet p1,Planet p2, double dt, int n){
 int main()
 {
     // Automatical data export included
-    Planet p1(-1,0,0,0,-2,0,0,0,0,1) ;
-    Planet p2(1,0,0,0,2,0,0,0,0,1);
-    //verletalgorithm(p1,p2,0.001,1000);
-    rungeKuttaMethod(p1,p2,0.001,1000);
+    Planet p1(0,0,0,0,0,0,0,0,0,1) ;
+    Planet p2(1,0,0,0,2*M_PI,0,0,0,0,0.000003);
+    //verletalgorithm(p1,p2,0.001,10000000);
+    rungeKuttaMethod(p1,p2,0.001,10000000);
 }
