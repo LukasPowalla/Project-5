@@ -1,0 +1,48 @@
+﻿energy 
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# Your branch is up-to-date with 'origin/master'.
+#
+# Changes to be committed:
+#	new file:   Richard/energyfunctions/Data_plots/Rungekuttaposition.txt
+#	new file:   Richard/energyfunctions/Data_plots/Rungekuttaposition_Position2.png
+#	new file:   Richard/energyfunctions/Data_plots/planetposition_verlet.png
+#	new file:   Richard/energyfunctions/Data_plots/planetposition_verlet.txt
+#	new file:   Richard/energyfunctions/Data_plots/plotskript.txt~
+#	new file:   Richard/energyfunctions/Data_plots/plotskript_Runge.txt
+#	new file:   Richard/energyfunctions/Data_plots/plotskript_Verlet.txt
+#	new file:   Richard/energyfunctions/Data_plots/plotskript_Verlet.txt~
+#	new file:   Richard/energyfunctions/Project5_lukas/.gitignore
+#	new file:   Richard/energyfunctions/Project5_lukas/Project5_lukas.pro
+#	new file:   Richard/energyfunctions/Project5_lukas/gaussian_random.cpp
+#	new file:   Richard/energyfunctions/Project5_lukas/gaussian_random.h
+#	new file:   Richard/energyfunctions/Project5_lukas/main.cpp
+#	new file:   Richard/energyfunctions/Project5_lukas/planet.cpp
+#	new file:   Richard/energyfunctions/Project5_lukas/planet.h
+#	new file:   Richard/energyfunctions/Project5_lukas/solarsystem.cpp
+#	new file:   Richard/energyfunctions/Project5_lukas/solarsystem.h
+#	new file:   Richard/energyfunctions/build-Project5_lukas-Desktop_Qt_5_4_2_MinGW_32bit2-Debug/Makefile
+#	new file:   Richard/energyfunctions/build-Project5_lukas-Desktop_Qt_5_4_2_MinGW_32bit2-Debug/Makefile.Debug
+#	new file:   Richard/energyfunctions/build-Project5_lukas-Desktop_Qt_5_4_2_MinGW_32bit2-Debug/Makefile.Release
+#	new file:   Richard/energyfunctions/build-Project5_lukas-Desktop_Qt_5_4_2_MinGW_32bit2-Debug/Rungekuttaposition.txt
+#	new file:   Richard/energyfunctions/build-Project5_lukas-Desktop_Qt_5_4_2_MinGW_32bit2-Debug/debug/Project5_lukas.exe
+#	new file:   Richard/energyfunctions/build-Project5_lukas-Desktop_Qt_5_4_2_MinGW_32bit2-Debug/debug/gaussian_random.o
+#	new file:   Richard/energyfunctions/build-Project5_lukas-Desktop_Qt_5_4_2_MinGW_32bit2-Debug/debug/main.o
+#	new file:   Richard/energyfunctions/build-Project5_lukas-Desktop_Qt_5_4_2_MinGW_32bit2-Debug/debug/planet.o
+#	new file:   Richard/energyfunctions/build-Project5_lukas-Desktop_Qt_5_4_2_MinGW_32bit2-Debug/debug/solarsystem.o
+#	new file:   Richard/energyfunctions/build-Project5_lukas-Desktop_Qt_5_4_2_MinGW_32bit2-Debug/kinPotFile
+#	new file:   Richard/energyfunctions/build-Project5_lukas-Desktop_Qt_5_4_2_MinGW_32bit2-Debug/kinPotFile.txt
+#	new file:   Richard/energyfunctions/build-Project5_lukas-Desktop_Qt_5_4_2_MinGW_32bit2-Debug/kinPotFile2.txt
+#	new file:   Richard/energyfunctions/build-Project5_lukas-Desktop_Qt_5_4_2_MinGW_32bit2-Debug/planetposition_verlet.txt
+#	new file:   Richard/energyfunctions/build-Project5_lukas-Desktop_Qt_5_5_1_GCC_64bit-Debug/Makefile
+#	new file:   Richard/energyfunctions/build-Project5_lukas-Desktop_Qt_5_5_1_GCC_64bit-Debug/Project5_lukas
+#	new file:   Richard/energyfunctions/build-Project5_lukas-Desktop_Qt_5_5_1_GCC_64bit-Debug/gaussian_radnom.o
+#	new file:   Richard/energyfunctions/build-Project5_lukas-Desktop_Qt_5_5_1_GCC_64bit-Debug/gaussian_random.o
+#	new file:   Richard/energyfunctions/build-Project5_lukas-Desktop_Qt_5_5_1_GCC_64bit-Debug/main.o
+#	new file:   Richard/energyfunctions/build-Project5_lukas-Desktop_Qt_5_5_1_GCC_64bit-Debug/planet.o
+#	new file:   Richard/energyfunctions/build-Project5_lukas-Desktop_Qt_5_5_1_GCC_64bit-Debug/planetposition_verlet.txt~
+#	new file:   Richard/energyfunctions/build-Project5_lukas-Desktop_Qt_5_5_1_GCC_64bit-Debug/random.o
+#	new file:   Richard/energyfunctions/build-Project5_lukas-Desktop_Qt_5_5_1_GCC_64bit-Debug/solarsystem.o
+#
+
