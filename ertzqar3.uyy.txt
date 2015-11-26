@@ -1,0 +1,21 @@
+﻿project5-M.code
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# Your branch is up-to-date with 'origin/master'.
+#
+# Changes to be committed:
+#	new file:   Richard/project-5LectureCode/.qmake.stash
+#	new file:   Richard/project-5LectureCode/Makefile
+#	new file:   Richard/project-5LectureCode/Makefile.Debug
+#	new file:   Richard/project-5LectureCode/Makefile.Release
+#	new file:   Richard/project-5LectureCode/Readme.txt
+#	new file:   Richard/project-5LectureCode/main.cpp
+#	new file:   Richard/project-5LectureCode/planet.cpp
+#	new file:   Richard/project-5LectureCode/planet.h
+#	new file:   Richard/project-5LectureCode/project-5.pro
+#	new file:   Richard/project-5LectureCode/project-5.pro.user
+#	new file:   Richard/project-5LectureCode/solarsystem.cpp
+#	new file:   Richard/project-5LectureCode/solarsystem.h
+#
+

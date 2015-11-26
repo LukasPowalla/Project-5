@@ -23,17 +23,17 @@ void solarsystem::print_position(ofstream &output, ofstream &output2, vector<pla
     if(n>3 || n<=0) n=3;
     for(int i=0; i<vec.size(); i++){
         all_planets[i] = vec[i];
-        std::cout << std::scientific;
+       // std::cout << std::scientific;
         for(int j=0; j<n;j++){
-        std::cout << all_planets[i].position[j] << "   ";
+       // std::cout << all_planets[i].position[j] << "   ";
         output << std::scientific << all_planets[i].position[j] << "   ";
         output2 << std::scientific << all_planets[i].velocity[j] << "   ";
         }
-        std::cout << "         ";
+       // std::cout << "         ";
         output  << "         ";
         output2  << "         ";
        }
-    std::cout << std::endl;
+    //std::cout << std::endl;
     output << endl;
     output2 << endl;
 }
@@ -81,9 +81,10 @@ void solarsystem::solverRK4(vector<planet> vec, double h, double tmax){
         sprintf(filename, "Planet_position_RK4_%f.dat", h);
         sprintf(filename2, "Planet_velocity_RK4_%f.dat", h);
 
-        ofstream output (filename);
-        ofstream output2 (filename2);
-
+        ofstream output;
+        ofstream output2;
+        output.open("RK4position.txt");
+        output2.open("velocity.txt");
         if (output.is_open()){
             output.precision(5);
             output2.precision(5);
@@ -109,7 +110,7 @@ void solarsystem::solverRK4(vector<planet> vec, double h, double tmax){
              }
 
              //Syncroniz position and velocity with the classes
-            all_planets[j] = vec[j];
+             all_planets[j] = vec[j];
              for(int i=0; i<3; i++){
              all_planets[j].position[i] = y_i(j,i);
              all_planets[j].velocity[i] = y_i(j,i+3);
@@ -117,7 +118,7 @@ void solarsystem::solverRK4(vector<planet> vec, double h, double tmax){
 
         }
 
-print_position(output, output2, vec, 3);
+print_position(output, output2, all_planets, 3);
 
 t+=h;
 
@@ -144,9 +145,10 @@ void solarsystem::solverVERLET(vector<planet> vec, double h, double tmax){
     char *filename2 = new char[1000];
         sprintf(filename, "Planet_position_Verlet_%f.dat", h);
         sprintf(filename2, "Planet_velocity_Verlet_%f.dat", h);
-
-            ofstream output (filename);
-            ofstream output2 (filename2);
+        ofstream output;
+        ofstream output2;
+        output.open("RK4position.txt");
+        output2.open("velocity.txt");
 
             if (output.is_open()){
             output.precision(5);
@@ -182,7 +184,7 @@ void solarsystem::solverVERLET(vector<planet> vec, double h, double tmax){
              all_planets[j].velocity[i] = y_i(j,i+3);
              }
         }
-print_position(output, output2, vec,3);
+print_position(output, output2, all_planets,3);
 
 t+=h;
 
@@ -202,12 +204,13 @@ void solarsystem::sum_matrix(mat &result, double coeff_one, mat &first,double co
     }
 }
 void solarsystem::printmat(mat &ma, int n){
-    cout << endl;
+    //cout << endl;
     for(int i=0; i<7; i++){
 
         for(int k=0; k<n;k++){
-            cout <<  ma(k,i)<<" " ;
-        } cout << endl;}
+      //      cout <<  ma(k,i)<<" " ;
+        }// cout << endl;
+    }
 }
 double solarsystem::force(double x, double y, double z, double Mothers){
     double G=  4*M_PI*M_PI;
