@@ -15,6 +15,13 @@ using namespace arma;
 class solarsystem
 {
 public:
+    void kinPotEnergy();
+    void kinPotEnergy2();
+    double* vecKinpot;
+    double R0=20;
+    double averagemass=10;
+    int numplanets;
+    double G;
     solarsystem();
     vector<Planet> planets;
     Mat<double> A;

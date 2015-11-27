@@ -1,4 +1,4 @@
-#include "gaussian_random.h"
+ #include "gaussian_random.h"
 #include <random>
 #include <cmath>
 #include <time.h>

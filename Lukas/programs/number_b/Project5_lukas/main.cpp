@@ -17,7 +17,7 @@ int main()
     solarsystem mysystem;
     int numberofplanets=100;
     for(int i=0;i<numberofplanets;i++){
-        mysystem.addrandomplanet(63241.1);
+        mysystem.addrandomplanet(20);
     }
 
     /*Planet p1(0,0,0,0,0,0,0,0,0,1) ;
@@ -27,12 +27,12 @@ int main()
     //mysystem.VelocityVerlet(0.001,1000);
     mysystem.RungeKuttamethod(0.001,1000);
 
-    for(int k=0;k<numberofplanets;k++){
+    /*for(int k=0;k<numberofplanets;k++){
         cout<<mysystem.planets[k].position[0]<<endl;
         cout<<mysystem.planets[k].position[1]<<endl;
         cout<<mysystem.planets[k].position[2]<<endl;
         cout<<mysystem.planets[k].m<<endl<<endl;
-    }
+    }*/
 }
 
 

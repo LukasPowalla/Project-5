@@ -1,7 +1,0 @@
-plot [-1:1][-1:1] "verletposition.txt" using 1:2 title "movement of planet2 around planet1 ,m=1,vy=2,rx=1" with lines 
-replot "verletposition.txt" using 3:4 title "movement of p1 around p2,m=1,vy=-2,rx=-1; dt=0.001;n=1000 " with lines 
-	set xlabel "x-position" 
- 	set ylabel "y-position " 
-	set term png 
-	set output "Verletposition2.png" 
-	replot 
