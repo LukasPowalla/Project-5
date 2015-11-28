@@ -21,6 +21,8 @@ solarsystem::solarsystem() : gen(this->rd()), dis(0,1)
 
 void solarsystem::addplanet(Planet Planet1){
     planets.push_back(Planet1); // I add the planet to the vector of planets
+    average_kin.push_back(0);
+    average_pot.push_back(0);
     this->numplanets+=1;
     G=4*M_PI*M_PI*R0*R0*R0/(32*this->numplanets*averagemass);
 }
@@ -46,17 +48,16 @@ void solarsystem::VelocityVerlet(double dt,int n){
         A.col(0)=A.col(0)+A.col(1)*dt;               // r(t+dt)
         calculateForces();                           // a(t+dt)
         A.col(1)=A.col(1)+dt*dA.col(1);              // v(t+0.5dt) -> v(t+3/2dt)
-        //cout<<endl<<A(3,0)<<"  "<<A(4,0)<<"  "<<k<<endl;
         for(int i=0;i<this->numplanets;i+=1){
-            //planetpositionVerlet<<endl;
             for(int j=0;j<3;j++){
                 planets[i].position[j]=A(3*i+j,0);
                 planets[i].velocity[j]=A(3*i+j,1);
                 planetpositionVerlet<<A(3*i+j,0)<<"         ";
             }
         }
+        planetpositionVerlet<<endl;
         //-------------------------------------------------------------------
-        if(0 == k%100){
+        if(0 == k%1){
             kinPotEnergy();
             for (int i = 0; i < (this->numplanets*2+3); i++){
                 kinPotFile<<setw(30)<<vecKinpot[i];
@@ -65,6 +66,7 @@ void solarsystem::VelocityVerlet(double dt,int n){
         }
     }
     kinPotFile.close();
+    virial_output();
     planetpositionVerlet.close();
 }
 
@@ -106,7 +108,7 @@ void solarsystem::calculateForces(){
             double dx=planets[i].position[0]-planets[j].position[0];
             double dy=planets[i].position[1]-planets[j].position[1];
             double dz=planets[i].position[2]-planets[j].position[2];
-            double dr2=dx*dx+dy*dy+dz*dz;
+            double dr2=dx*dx+dy*dy+dz*dz+epsilon*epsilon;
             //calculate forces
             double Fx=(G*(planets[i].m)*(planets[j].m)*dx)/pow(dr2,1.5);
             double Fy=(G*(planets[i].m)*(planets[j].m)*dy)/pow(dr2,1.5);
@@ -140,7 +142,7 @@ mat solarsystem::derivate( Mat<double> B){
             double dx=B(3*i,0)-B(3*j,0);
             double dy=B(3*i+1,0)-B(3*j+1,0);
             double dz=B(3*i+2,0)-B(3*j+2,0);
-            double dr2=dx*dx+dy*dy+dz*dz;
+            double dr2=dx*dx+dy*dy+dz*dz+epsilon*epsilon;
             //calculate forces
             double Fx=(G*(planets[i].m)*(planets[j].m)*dx)/pow(dr2,1.5);
             double Fy=(G*(planets[i].m)*(planets[j].m)*dy)/pow(dr2,1.5);
@@ -200,6 +202,7 @@ void solarsystem::RungeKuttamethod(double dt,int n){
         //------------------------------------------------------------
     }
     kinPotFile2.close();
+    virial_output();
     //RungeKutta_position.close();
 }
 
@@ -218,7 +221,7 @@ void solarsystem::addrandomplanet(double R_0){
 }
 
 //------------------------------------------------------here we find the (total energy , total kinetic energy ,total potetnail,k1,p1,k2,p2, ...)
-void solarsystem::kinPotEnergy(){
+void solarsystem::kinPotEnergy(){ //Verlet
     //cout<<n;
     vecKinpot = new double[ this->numplanets*2 + 3];
     double kinetic;
@@ -254,18 +257,22 @@ void solarsystem::kinPotEnergy(){
             potenial += p(i,j);
         }
         vecKinpot[2*i+4] = potenial;
-        //totalPotenial += potenial;
         potenial = 0;
     }
     vecKinpot[0] = totalKinetic+totalPotenial;
     vecKinpot[1] = totalKinetic;
     vecKinpot[2] = totalPotenial;
+    //Virial analysis
+    for(int i=0;i<this->numplanets;i++){
+        average_kin[i]+=vecKinpot[2+2*i];
+        average_pot[i]+=vecKinpot[3+2*i];
+    }
+
 
 }
 //-----------------------------------------------------------------------
 
-void solarsystem::kinPotEnergy2(){
-    //cout<<n;
+void solarsystem::kinPotEnergy2(){ //RK4
     vecKinpot = new double[ this->numplanets*2 + 3];
     double kinetic;
     double potenial = 0.0;
@@ -301,12 +308,27 @@ void solarsystem::kinPotEnergy2(){
             potenial += p(i,j);
         }
         vecKinpot[2*i+4] = potenial;
-        //totalPotenial += potenial;
         potenial = 0;
     }
     vecKinpot[0] = totalKinetic+totalPotenial;
     vecKinpot[1] = totalKinetic;
     vecKinpot[2] = totalPotenial;
+    //Virial analysis
+    for(int i=0;i<this->numplanets;i++){
+        average_kin[i]=vecKinpot[2+2*i];
+        average_pot[i]=vecKinpot[3+2*i];
+    }
+
 
 }
 //---------------------------------------------------------------
+
+void solarsystem::virial_output(){
+    ofstream virialanalysis;
+    virialanalysis.open("Virialkoefficient.txt");
+    for(int i=0;i<this->numplanets;i++){
+        virialanalysis<<i<<"   "<< vecKinpot[2+2*i]+vecKinpot[3+2*i]<<"    ";
+        virialanalysis<< average_pot[i]/average_kin[i]<<endl;
+    }
+    virialanalysis.close();
+}

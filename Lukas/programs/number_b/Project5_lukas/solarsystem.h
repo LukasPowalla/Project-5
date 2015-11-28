@@ -18,10 +18,14 @@ public:
     void kinPotEnergy();
     void kinPotEnergy2();
     double* vecKinpot;
+    double* finalEnergy;//total Energy of i-th particle at the last timestep
+    vector<double> average_kin; // <k>*N
+    vector<double> average_pot; // <V>*N
     double R0=20;
     double averagemass=10;
     int numplanets;
     double G;
+    double epsilon=0.002;
     solarsystem();
     vector<Planet> planets;
     Mat<double> A;
@@ -33,6 +37,7 @@ public:
 
     void addplanet(Planet Planet1);
     void setmatrices();
+    void virial_output(); //outputs the virial-Koefficient and the total Energy of the i-th particle
     void VelocityVerlet(double dt,int n);
     void RungeKuttamethod(double dt,int n);
     mat derivate( Mat<double> B);
