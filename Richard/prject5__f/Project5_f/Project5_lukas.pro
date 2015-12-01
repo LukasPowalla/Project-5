@@ -12,5 +12,6 @@ HEADERS += \
     planet.h \
     solarsystem.h \
     gaussian_random.h
+
 INCLUDEPATH += C:\Qt2\include
 # LIBS += -L C:\Qt2

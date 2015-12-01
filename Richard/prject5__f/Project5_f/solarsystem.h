@@ -25,8 +25,9 @@ public:
     double R0=20;
     double averagemass=10;
     int numplanets;
+    int numplanetsInSystem;
     double G;
-    double epsilon=0.003;
+    double epsilon=0.005;
     solarsystem();
     vector<Planet> planets;
     Mat<double> A;
