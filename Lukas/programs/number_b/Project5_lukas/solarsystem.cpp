@@ -214,9 +214,13 @@ void solarsystem::addrandomplanet(double R_0){
     randomplanet.velocity[1]=0;
     randomplanet.velocity[2]=0;
     
-    randomplanet.position[0]=R_0*pow(dis(gen),(1.0/3.0))*sqrt((1-(pow(1-2*dis(gen),2))))*cos(2*M_PI*dis(gen));
-    randomplanet.position[1]=R_0*pow(dis(gen),(1.0/3.0))*sqrt((1-(pow(1-2*dis(gen),2))))*sin(2*M_PI*dis(gen));
-    randomplanet.position[2]=R_0*pow(dis(gen),(1.0/3.0))*(1-(2*dis(gen)));
+    double rand_r=dis(gen);
+    double rand_theta=dis(gen);
+    double rand_phi=dis(gen);
+
+    randomplanet.position[0]=R_0*pow(rand_r,(1.0/3.0))*sqrt((1-(pow(1-2*rand_theta,2))))*cos(2*M_PI*rand_phi);
+    randomplanet.position[1]=R_0*pow(rand_r,(1.0/3.0))*sqrt((1-(pow(1-2*rand_theta,2))))*sin(2*M_PI*rand_phi);
+    randomplanet.position[2]=R_0*pow(rand_r,(1.0/3.0))*(1-(2*rand_theta));
     addplanet(randomplanet);
 }
 
