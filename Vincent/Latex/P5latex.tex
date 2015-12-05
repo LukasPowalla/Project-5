@@ -39,25 +39,69 @@ We are doing these calculation by using the Velocity Verlet algorithm and the fo
 
 \subsection{Newton's law of universal gravitation}
 
-Newton's law of universal gravitation states that every point mass attracts every single other point mass by a force pointing along the line intersecting both points. The force two points of mass with the masses $m_1$ and $m_2$ and a distance of $r$ to each other attract each other is given by
+Newton's law of universal gravitation states that every point mass attracts every single other point mass by a force pointing along the line intersecting both points. The force two points of mass with the masses $m_i$ and $m_j$ and a distance of $r_{ij}$ to each other attract each other is given by
 
 \begin{equation}	
 \label{eq:gra}
-\mathbf{F_G} = G \frac{m_1 \cdot m_2}{r^3} \cdot \mathbf{r}
+\mathbf{F_G} = - G \frac{m_i \cdot m_j}{r_{ij}^3} \cdot \mathbf{r_{ij}}
 \end{equation}
 
 Where $G$ is the gravitational constant. In our project we have a system with $n$ stars which get approximated as points of mass. Hence, to get the gravitational force acting on one star, we just need to sum over all $\mathbf{F}_G$'s (having the form of equation \eqref{eq:gra}) that are acting on this star due to the other stars.
 
 \begin{equation}	
 \label{eq:gra2}
-\mathbf{F}_{Gi} = \sum_{j \neq i}^{n}G \frac{m_i \cdot m_j}{r_{ij}^3} \cdot \mathbf{r}_{ij} = G m_i \sum_{j \neq i}^{n} m_j \frac{\mathbf{r}_{ij}}{r_{ij}^3}
+\mathbf{F}_{Gi} = \sum_{j \neq i}^{n} - G \frac{m_i \cdot m_j}{r_{ij}^3} \cdot \mathbf{r}_{ij} = - G m_i \sum_{j \neq i}^{n} m_j \frac{\mathbf{r}_{ij}}{r_{ij}^3}
 \end{equation}
 
 Then the acceleration of star $i$ is given by
 
 \begin{equation}	
 \label{eq:gra3}
-\mathbf{a} = G \sum_{j \neq i}^{n} m_j \frac{\mathbf{r}_{ij}}{r_{ij}^3}
+\mathbf{a} = - G \sum_{j \neq i}^{n} m_j \frac{\mathbf{r}_{ij}}{r_{ij}^3}
+\end{equation}
+
+\subsection{Energy}
+
+In the project we are going to observe the kinetic and potential energy of systems of particles, which interact via the gravitational force. The kinetic energy of a mass $m$ with velocity $v$ is given by $E_{Kin} = \frac{1}{2} m v^2$. Because we have $n$ particles we just need to sum over the kinetic energies of all particles to get the kinetic energy of the system.
+
+\begin{equation}	
+\label{en1}
+E_{Kin} = \sum_{i = 1}^{n} \frac{1}{2} m_i v_i^2
+\end{equation}
+
+The potential energy of a system is given by $- \mathbf{\nabla} E_{Pot} = \mathbf{F}$. Hence we have $\frac{\partial}{\partial x_i}E_{Pot} =- F_{x_i}$ and can get a potential energy by trough integration:
+
+\begin{equation}
+\label{en2}
+	E_{Pot} = - \int dx' F_{x}(x', y ,z)
+\end{equation}
+
+To get the potential energy of our system, we add one particle after an other from an infinite distance to the system. Each time we add a particle $i$ we calculate its potential energy $V_i$ (negative work that is needed to move the particle to an infinite distance to the system) using \eqref{en2}. We do this until we have $n$ particles in the system. Then the potential energy of our system is given by the sum over all $V_i$. If we add the particle 1 there is no force yet, hence $V_1 = 0$. When adding the second particle there is a force between particle 1 and 2. Adding the particle number $i$, there are $i-1$ forces acting on particle $i$(we write the force between particle $i$ and $j$, acting on $i$, as $F_{ij}$). Hence $V_i$ can simply be calculated by
+
+\begin{equation}
+\label{en3}
+	V_i = - \int_{x_i}^{\infty} dx \sum_{j \neq i}^{i} F_{ij_x}
+\end{equation}
+
+And we get
+
+\begin{equation}
+\label{en4}
+	V_{System} = \sum_{i = 1}^{n} V_i = - \sum_{i = 1}^{n} \int_{x_i}^{\infty} dx \sum_{j \neq i}^{i} F_{ij_x} = - \frac{1}{2} \sum_{i,j = 1; i \neq j}^{n} \int_{x_i}^{\infty} dx F_{ij_x}
+\end{equation}
+
+With \eqref{eq:gra} we know
+
+\begin{equation}
+\label{en5}
+	\int_{x_i}^{\infty} dx F_{ij_x} = - \int_{x_i}^{\infty} dx  G m_i m_j\frac{(x - x_j)}{((x - x_j)^2 + (y_i - y_j)^2 + (z_i - z_j)^2)^\frac{3}{2}} = - \left[ G \frac{m_i m_j}{((x - x_j)^2 + (y_i - y_j)^2 + (z_i - z_j)^2)^\frac{1}{2}}\right]^\infty_{x_i} = G \frac{m_i m_j}{r_{ij}}
+\end{equation}
+
+Setting \eqref{en5} in \eqref{en4} we get the potential energy of our system, which is
+
+\begin{equation}
+	\label{en6}
+	V_{System} = - \frac{1}{2} \sum_{i,j = 1; i \neq j}^{n} G \frac{m_i m_j}{r_{ij}}
 \end{equation}
 
 \subsection{Open Clusters}
