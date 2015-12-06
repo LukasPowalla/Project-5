@@ -399,21 +399,113 @@ void solarsystem::setmatrices(){
 
 \subsection{Velocity-verlet-algorithm}
 \begin{lstlisting}
-...
- setmatrices();
- calculateForces();                              
- A.col(1)=A.col(1)+0.5*dt*dA.col(1); // v(t)->v(t+0.5dt)
- for(int k=0;k<n;k++){
-    A.col(0)=A.col(0)+A.col(1)*dt;   // r(t+dt)
-    calculateForces();               // a(t+dt)
-    A.col(1)=A.col(1)+dt*dA.col(1);  // v(t+0.5dt) -> v(t+3/2dt)
+void solarsystem::VelocityVerlet(double dt,int n){
+  ...
+   setmatrices();
+   calculateForces();                              
+   A.col(1)=A.col(1)+0.5*dt*dA.col(1); // v(t)->v(t+0.5dt)
+   for(int k=0;k<n;k++){
+      A.col(0)=A.col(0)+A.col(1)*dt;   // r(t+dt)
+      calculateForces();               // a(t+dt)
+      A.col(1)=A.col(1)+dt*dA.col(1);  // v(t+0.5dt) -> v(t+3/2dt)
+      }
+  ...
+}
+\end{lstlisting}
+
+\begin{lstlisting}
+void solarsystem::calculateForces(){
+
+    
+    for(int k=0;k<this->numplanets;k++){
+        for(int l=0;l<3;l++){
+            planets[k].force[l]=0;
+        }
     }
-...
+    for(int i=0;i<this->numplanets;i++){
+        for(int j=i+1;j<this->numplanets;j++){
+            double dx=A(3*i,0)-A(3*j,0);
+            double dy=A(3*i+1,0)-A(3*j+1,0);
+            double dz=A(3*i+2,0)-A(3*j+2,0);
+            double dr2=dx*dx+dy*dy+dz*dz+epsilon*epsilon;
+            //calculate forces
+            double Fx=(G*(planets[i].m)*(planets[j].m)*dx)/pow(dr2,1.5);
+            double Fy=(G*(planets[i].m)*(planets[j].m)*dy)/pow(dr2,1.5);
+            double Fz=(G*(planets[i].m)*(planets[j].m)*dz)/pow(dr2,1.5);
+            //update planet properties
+            planets[i].force[0]-=Fx;
+            planets[j].force[0]+=Fx;
+            planets[i].force[1]-=Fy;
+            planets[j].force[1]+=Fy;
+            planets[i].force[2]-=Fz;
+            planets[j].force[2]+=Fz;
+        }
+    }
+    //update the matrix dA
+    for(int i=0;i<this->numplanets;i+=1){
+        for(int j=0;j<3;j++){
+            dA(3*i+j,0)=planets[i].velocity[j];
+            dA(3*i+j,1)=planets[i].force[j]/planets[i].m;
+        }
+    }
+    
+}
 \end{lstlisting}
 
 \subsection{Runge Kutta-Method}
+\begin{lstlisting}
 
+void solarsystem::RungeKuttamethod(double dt,int n){
+    setmatrices();
+    Mat<double> k1,k2,k3,k4;
+    k1=Mat<double>(this->numplanets*3,2);
+    k2=Mat<double>(this->numplanets*3,2);
+    k3=Mat<double>(this->numplanets*3,2);
+    k4=Mat<double>(this->numplanets*3,2);
 
+    for(int i=0;i<n;i++){
+        k1=derivate(A);
+        k2=derivate(A+k1*(dt/2));
+        k3=derivate(A+k2*(dt/2));
+        k4=derivate(A+k3*dt);
+        A=A+(1.0/6.0)*(k1+2*k2+2*k3+k4)*dt;
+        }
+    }
+}
+\end{lstlisting}
+\begin{lstlisting}
+mat solarsystem::derivate( Mat<double> B){
+    Mat<double> dC;
+    dC=Mat<double>(this->numplanets*3,2,fill::zeros);
+    for(int i=0;i<this->numplanets;i++){
+        for(int j=i+1;j<this->numplanets;j++){
+            double dx=B(3*i,0)-B(3*j,0);
+            double dy=B(3*i+1,0)-B(3*j+1,0);
+            double dz=B(3*i+2,0)-B(3*j+2,0);
+            double dr2=dx*dx+dy*dy+dz*dz+epsilon*epsilon;
+            //calculate forces
+            double Fx=(G*(planets[i].m)*(planets[j].m)*dx)/pow(dr2,1.5);
+            double Fy=(G*(planets[i].m)*(planets[j].m)*dy)/pow(dr2,1.5);
+            double Fz=(G*(planets[i].m)*(planets[j].m)*dz)/pow(dr2,1.5);//until here B
+            //update planet properties (not necessary)
+            dC(3*i,1)-=Fx;
+            dC(3*j,1)+=Fx;
+            dC(3*i+1,1)-=Fy;
+            dC(3*j+1,1)+=Fy;
+            dC(3*i+2,1)-=Fz;
+            dC(3*j+2,1)+=Fz;//returen dC with v from B and new acceleration
+        }
+    }
+    for(int i=0;i<this->numplanets;i+=1){
+        for(int j=0;j<3;j++){
+            dC(3*i+j,1)=dC(3*i+j,1)/planets[i].m;
+            // cout << dC/planets[i].m<<endl;
+        }
+    }
+    dC.col(0)=B.col(1);
+    return(dC);
+}
+\end{lstlisting}
 \section{Discussion}
 
 \section{Source code}
