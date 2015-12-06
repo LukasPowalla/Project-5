@@ -105,9 +105,9 @@ void solarsystem::calculateForces(){
     }
     for(int i=0;i<this->numplanets;i++){
         for(int j=i+1;j<this->numplanets;j++){
-            double dx=planets[i].position[0]-planets[j].position[0];
-            double dy=planets[i].position[1]-planets[j].position[1];
-            double dz=planets[i].position[2]-planets[j].position[2];
+            double dx=A(3*i,0)-A(3*j,0);
+            double dy=A(3*i+1,0)-A(3*j+1,0);
+            double dz=A(3*i+2,0)-A(3*j+2,0);
             double dr2=dx*dx+dy*dy+dz*dz+epsilon*epsilon;
             //calculate forces
             double Fx=(G*(planets[i].m)*(planets[j].m)*dx)/pow(dr2,1.5);
@@ -206,7 +206,7 @@ void solarsystem::RungeKuttamethod(double dt,int n){
     //RungeKutta_position.close();
 }
 
-void solarsystem::addrandomplanet(double R_0){
+void solarsystem::addrandomplanet(){
     Planet randomplanet;
     randomplanet.m=object.generateGaussianNoise(10,1);
     
@@ -218,9 +218,9 @@ void solarsystem::addrandomplanet(double R_0){
     double rand_theta=dis(gen);
     double rand_phi=dis(gen);
 
-    randomplanet.position[0]=R_0*pow(rand_r,(1.0/3.0))*sqrt((1-(pow(1-2*rand_theta,2))))*cos(2*M_PI*rand_phi);
-    randomplanet.position[1]=R_0*pow(rand_r,(1.0/3.0))*sqrt((1-(pow(1-2*rand_theta,2))))*sin(2*M_PI*rand_phi);
-    randomplanet.position[2]=R_0*pow(rand_r,(1.0/3.0))*(1-(2*rand_theta));
+    randomplanet.position[0]=R0*pow(rand_r,(1.0/3.0))*sqrt((1-(pow(1-2*rand_theta,2))))*cos(2*M_PI*rand_phi);
+    randomplanet.position[1]=R0*pow(rand_r,(1.0/3.0))*sqrt((1-(pow(1-2*rand_theta,2))))*sin(2*M_PI*rand_phi);
+    randomplanet.position[2]=R0*pow(rand_r,(1.0/3.0))*(1-(2*rand_theta));
     addplanet(randomplanet);
 }
 

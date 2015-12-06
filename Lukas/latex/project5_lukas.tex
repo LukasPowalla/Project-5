@@ -256,6 +256,11 @@ class solarsystem
 public:
     //constructor
     solarsystem();
+    //constants and arrays used for Energy-analysis
+    double* vecKinpot;
+    double* finalEnergy;
+    vector<double> average_kin; 
+    vector<double> average_pot; 
     //constants and objects
     double R0=20;
     double averagemass=10;
@@ -280,7 +285,10 @@ public:
     //Functions used only for Runge-Kutta-method
     void RungeKuttamethod(double dt,int n);
     mat derivate( Mat<double> B);
-
+     // funktions for Energy-analysis
+    void kinPotEnergy();  //VelocityVerlet
+    void kinPotEnergy2(); //RK-4
+    void virial_output();
 };
 \end{lstlisting}
 We will now briefly explain the use of the constructor, constants and functions of the class solarsystem. The functions, which are specific to Velocity-Verlet or Runge-Kutta method are explained in the section named after the method. The use of the random class itself will not be explained here. We are using a random number generator with a period of $2^{32}$. This is sufficient. The random number generator is seeded by default while constructing a object of solarsystem. 
@@ -297,11 +305,112 @@ We need some constants for the random number generator in order to create random
 The smoothing-factor epsilon is also initialised and defined. 
 \subsubsection{general functions} 
 Our n-body- system can be used in different ways. You can manually add a planet with chosen initial position, initial velocity and mass. This is done by the function addplanet(Planet Planet1). Therefore, this algorithm can also be used to calculate the motion of a given two body system. With small changes, it is also be possible to simulate our solar-system. (G has to be changed)
+\begin{lstlisting}
+void solarsystem::addplanet(Planet Planet1){
+    planets.push_back(Planet1); //  adds the planet to the vector of planets
+    average_kin.push_back(0);
+    average_pot.push_back(0);
+    this->numplanets+=1;
+    G=4*M_PI*M_PI*R0*R0*R0/(32*this->numplanets*averagemass);
+}
+\end{lstlisting}
+On the other way, you can choose to add a planet with random position within a sphere and with given Gaussian-distributed mass of the planet. This is done by the function addrandomplanet(double R0 ). We set the planet-velocities to 0. With Box–Muller transform, we get a normal-distribution with given mean-value and given standard-deviation. The mass is set to a random Gaussian-distributed value. We wand a equal density at t=0 within a sphere. Therefore, we have to manipulate a random generated triple (u,v,w between 0 and 1) as follows:
+\begin{align*}
+r &=R0 \cdot \sqrt[3]{u} \\
+\theta &= \arccos(1-2v) \\
+\phi &= 2 \pi \omega
+\end{align*}
+We want to use spherical coordinate. Therefore, we transform back to spherical coordinates, simplify and get:
+\begin{align*}
+x&=R0 \cdot \sqrt[3]{u} \cdot  \sqrt{1-(1-2\cdot v)^{2} }\cdot cos(2\pi \cdot \omega) \\
+y&=R0 \cdot \sqrt[3]{u} \cdot  \sqrt{1-(1-2\cdot v)^{2} }\cdot sin(2\pi \cdot \omega) \\
+z &= R0 \cdot \sqrt[3]{u} \cdot (1-2 \cdot \omega )
+\end{align*}
+In the end, we add the new planet with the function addplanet to the solarsystem. 
+\begin{lstlisting}
+void solarsystem::addrandomplanet(){
+    Planet randomplanet;
+    // set andom mass with Gaussian-distribution
+    randomplanet.m=object.generateGaussianNoise(10,1);
+    // set velocities to 0
+    randomplanet.velocity[0]=0;
+    randomplanet.velocity[1]=0;
+    randomplanet.velocity[2]=0;
+    //generate random position
+    double r=dis(gen);
+    double theta=dis(gen);
+    double phi=dis(gen);
+    //transform random position in order to get
+    //Cartesian coordinates with constant density
+    randomplanet.position[0]=R0*pow(r,(1.0/3.0))*sqrt((1-(pow(1-2*theta,2))))*cos(2*M_PI*phi);
+    randomplanet.position[1]=R0*pow(r,(1.0/3.0))*sqrt((1-(pow(1-2*theta,2))))*sin(2*M_PI*phi);
+    randomplanet.position[2]=R0*pow(r,(1.0/3.0))*(1-(2*theta));
+    addplanet(randomplanet);
+}
+\end{lstlisting}
 
-On the other way, you can choose to add a planet with random position within a sphere and with given Gaussian-distributed mass of the planet. This is done by the function addrandomplanet(double R0 ). 
+To use the matrix-representation of position and velocity, we wrote the function setmatrices(), which constructs a martix A, which contains all positions and velocities of the planets, which has been added to the system so far. The position of the planets can be found in the first column and the velocity in the second column. Every planet has 3 Coordinates. In addition to that, we construct the matrix dA, which is the derivative of the matrix A. This means that in the first column are velocities and in the second column are accelerations. For RK4, this is really useful because we can perform very understandable operations like $A=A+dA \cdot dt $.
+\begin{align}
+A=
+\begin{bmatrix}
+r_{x_1} & v_{x_1}\\
+r_{y_1} & v_{y_1} \\
+r_{z_1} & v_{z_1} \\
+r_{x_2} & v_{x_2} \\
+... & ... \\
+r_{x_n} & v_{x_n}\\
+r_{y_n} & v_{y_n} \\
+r_{z_n} & v_{z_n} \\
+\end{bmatrix}
+& &
+dA=
+\begin{bmatrix}
+v_{x_1} & a_{x_1}\\
+v_{y_1} & a_{y_1} \\
+v_{z_1} & a_{z_1} \\
+v_{x_2} & a_{x_2} \\
+... & ... \\
+v_{x_n} & a_{x_n}\\
+v_{y_n} & a_{y_n} \\
+v_{z_n} & a_{z_n} \\
+\end{bmatrix}
+\end{align}
+\begin{lstlisting}
+void solarsystem::setmatrices(){
+    A=Mat<double>(this->numplanets*3,2);
+    dA=Mat<double>(this->numplanets*3,2);
+    
+    for(int i=0;i<this->numplanets;i+=1){
+        for(int j=0;j<3;j++){
+            A(3*i+j,0)=planets[i].position[j];
+            A(3*i+j,1)=planets[i].velocity[j];
+        }
+    }
+    
+    for(int i=0;i<this->numplanets;i+=1){
+        for(int j=0;j<3;j++){
+            dA(3*i+j,0)=planets[i].velocity[j];
+            dA(3*i+j,1)=planets[i].force[j]/planets[i].m;
+        }
+    }
+}
+\end{lstlisting}
 
-To use the matrix-representation of position and velocity, we wrote the function setmatrices(), which constructs a martix A, which contains all positions and velocities of the planets, which has been added to the system so far. 
+
 \subsection{Velocity-verlet-algorithm}
+\begin{lstlisting}
+...
+ setmatrices();
+ calculateForces();                              
+ A.col(1)=A.col(1)+0.5*dt*dA.col(1); // v(t)->v(t+0.5dt)
+ for(int k=0;k<n;k++){
+    A.col(0)=A.col(0)+A.col(1)*dt;   // r(t+dt)
+    calculateForces();               // a(t+dt)
+    A.col(1)=A.col(1)+dt*dA.col(1);  // v(t+0.5dt) -> v(t+3/2dt)
+    }
+...
+\end{lstlisting}
+
 \subsection{Runge Kutta-Method}
 
 

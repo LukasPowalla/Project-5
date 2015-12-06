@@ -6,7 +6,7 @@
 class Planet
 {
   public:
-    Planet(double rx, double ry, double rz,double v_x, double v_y, double v_z,double f_x,double f_y, double f_z, double mas);
+    Planet(double rx, double ry, double rz,double v_x, double v_y, double v_z, double mas);
     Planet();
     double position[3];
     double velocity[3];
