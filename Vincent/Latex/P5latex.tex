@@ -137,21 +137,46 @@ Which gives us a method to determine all $x_i$, if the boundary conditions are k
 
 \subsubsection{Velocity Verlet algorithm}
 
-The Velocity Verlet is similar to the Verlet algorithm. Here we use the Taylor expansion with $t_0 = t_i$ and $t = t_i + h$ to get the formula: 
+The Velocity Verlet is similar to the Verlet algorithm and is also using Taylor expansions. It uses a half-step velocity $v_{i+\frac{1}{2}}$($v(t) = \frac{dx}{dt}$) to calculate $x_{i+1}$. The first step of the algorithm is to calculate $v_{\frac{1}{2}}$ with \eqref{vv3}, using given $v_0$ and $a(x_0, t_0)$.
+
+\begin{equation}
+	\label{vv3}
+	v_{i + \frac{1}{2}} = v_i + \frac{h}{2} a(x_i, t_i)
+\end{equation}
+
+After this, the algorithm can be executed by simply repeating the following three steps for all $i$.
+
+1.: Calculate
+\begin{equation}
+	\label{vv4}
+	x_{i+1} = x_i +h v_{i+ \frac{1}{2}}
+\end{equation}
+
+2.: Calculate $a_{i+1}$ using $x_{i+1}$
+
+3.: Calculate
+\begin{equation}
+	\label{vv5}
+v_{i+\frac{3}{2}} = v_{i+\frac{1}{2}} +h a_{i+1}
+\end{equation}
+
+Because we have to calculate $v_\frac{1}{2}$ first, the algorithm is not self-starting. It has to be mentioned, that it is also possible to eliminate the half-step velocities by setting \eqref{vv3} in \eqref{vv4} and \eqref{vv5}. Then, we are using \eqref{vv5} to calculate $v_{i+1}$, by just using the factor $\frac{h}{2}$ instead of $h$ in the formula.
+Doing this, we get the formulas
 
 \begin{equation}
 \label{vv1}
-x_{i+1} = x_i + h \cdot v_i + \frac{h^2}{2}  a_i(x_i, t_i) + \sigma (h^3)
+x_{i+1} = x_i + h \cdot v_i + \frac{h^2}{2}  a_i(x_i, t_i)
 \end{equation}
 
-With $v(t) = \frac{dx}{dt}$. And we use the Trapezoidal rule to get the formula:
+and
 
 \begin{equation}
 \label{vv2}
-v_{i+1} = v_i + \frac{h}{2} \cdot (a(x_i, t_i) + a(x_{i+1}, t_{i+1})) + \sigma(h^2)
+v_{i+1} = v_i + \frac{h}{2} \cdot (a(x_i, t_i) + a(x_{i+1}, t_{i+1}))
 \end{equation}
 
-The algorithm starts with calculating equation \eqref{vv1} for $i = 0$ to get $x_{i+1}$. With this value, $a(x_i, t_i)$ and $a(x_{i+1}, t_{i+1})$ can be calculated. Then it is possible to calculate $v_{i+1}$ with equation \eqref{vv2}. These steps can now be repeated for $i = i+1$, allowing to get the values for all $x_i$ and $v_i$.
+We see, that \eqref{vv2} uses the Trapezoidal rule.
+This form of the algorithm starts with calculating equation \eqref{vv1} for $i = 0$ to get $x_{i+1}$. Knowing this value, $a(x_i, t_i)$ and $a(x_{i+1}, t_{i+1})$ can be calculated. Then it is possible to calculate $v_{i+1}$ with equation \eqref{vv2}. These steps can now be repeated for $i = i+1$, allowing to get the values for all $x_i$ and $v_i$.
 
 \subsection{Runge-Kutta methods}
 
