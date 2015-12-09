@@ -1,6 +1,0 @@
-plot [-1:1][-1:1] "planetposition_verlet.txt" using 1:2 title "movement of earth around sun with Velocity Verlet method"  
-	set xlabel "x-position" 
- 	set ylabel "y-position " 
-	set term png 
-	set output "planetposition_verlet.png" 
-	replot 

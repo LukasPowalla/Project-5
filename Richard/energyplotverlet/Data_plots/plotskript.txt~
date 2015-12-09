@@ -1,6 +1,0 @@
-plot [-1:1][-1:1] "Rungekuttaposition.txt" using 1:2 title "movement of planet2 around planet1 ,m=1,vy=2,rx=1"  
-	set xlabel "x-position" 
- 	set ylabel "y-position " 
-	set term png 
-	set output "Verletposition2.png" 
-	replot 

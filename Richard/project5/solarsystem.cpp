@@ -21,25 +21,19 @@ solarsystem::solarsystem() : gen(this->rd()), dis(0,1)
 
 void solarsystem::addplanet(Planet Planet1){
     planets.push_back(Planet1); // I add the planet to the vector of planets
-    average_kin.push_back(0);
-    average_pot.push_back(0);
     this->numplanets+=1;
     G=4*M_PI*M_PI*R0*R0*R0/(32*this->numplanets*averagemass);
 }
 
 void solarsystem::VelocityVerlet(double dt,int n){
-    //print file
+     //--------------------------------print file-----------------------------
     ofstream planetpositionVerlet;
-    planetpositionVerlet.open ("planetposition_verlet.txt");
-    // planetpositionVerlet << "r_x          r_y         r_z         t ";
-    //----------------------------------------------------------------------
     ofstream kinPotFile;
-    kinPotFile.open ("kinPotFile.txt");
-    kinPotFile<<setprecision(10)<<setw(30) <<"totalE"<<setprecision(10)<<setw(30) <<"totalK"<<setprecision(10)<<setw(30) <<"totalp";
-    for (int i = 0; i < this->numplanets; i++){
-        kinPotFile<< setprecision(10)<<setw(30)<<"k"<<i<<setprecision(10)<<setw(30) <<"p"<<i;
-    }
-    kinPotFile<<endl;
+    ofstream ergodicFile;
+
+    planetpositionVerlet.open ("planetposition_verlet.txt");
+    kinPotFile.open ("kinPotVerlet.txt");
+    ergodicFile.open ("ergodic.txt");
     //----------------------------------------------------------------------
     setmatrices();
     calculateForces();                               //explonation of the algorithm
@@ -52,21 +46,28 @@ void solarsystem::VelocityVerlet(double dt,int n){
             for(int j=0;j<3;j++){
                 planets[i].position[j]=A(3*i+j,0);
                 planets[i].velocity[j]=A(3*i+j,1);
+                //outputfile-------------------------------------------------
                 planetpositionVerlet<<A(3*i+j,0)<<"         ";
+
             }
         }
-        planetpositionVerlet<<endl;
-        //-------------------------------------------------------------------
+            //-------outpufile---------------------------------------------------
             kinPotEnergy();
-            for (int i = 0; i < (this->numplanets*2+3); i++){
-                kinPotFile<<numplanetsInSystem<<setw(30)<<vecKinpot[i];
+            centermassfunction();
+            //keeping the track for the cetnermass.
+            planetpositionVerlet<<centermass[0]<<"         "<<centermass[1]<<"         "<<centermass[2]<<"         "<<endl;
+            kinPotFile<<numplanetsInSystem<<"       "<<theTotalEnergy;
+            for (int i = 0; i < (this->numplanets); i++){
+                kinPotFile<<setw(30)<<"         "<<potentialEnergy[i]<<"            "<<kineticEnergy[i];
             }
+            ergodicFile<<ergodic<<"         "<<k<<endl;
             kinPotFile<<endl;
 
     }
     kinPotFile.close();
-    virial_output();
     planetpositionVerlet.close();
+    ergodicFile.close();
+    radialDensity();//calc the radial density in the laste step where we have a equilibrium position ;
 }
 
 // the function setmatrices initialises the matrix A and dA, which contains all necessary information about all of the planets
@@ -104,9 +105,9 @@ void solarsystem::calculateForces(){
     }
     for(int i=0;i<this->numplanets;i++){
         for(int j=i+1;j<this->numplanets;j++){
-            double dx=planets[i].position[0]-planets[j].position[0];
-            double dy=planets[i].position[1]-planets[j].position[1];
-            double dz=planets[i].position[2]-planets[j].position[2];
+            double dx=A(3*i,0)-A(3*j,0);
+            double dy=A(3*i+1,0)-A(3*j+1,0);
+            double dz=A(3*i+2,0)-A(3*j+2,0);
             double dr2=dx*dx+dy*dy+dz*dz+epsilon*epsilon;
             //calculate forces
             double Fx=(G*(planets[i].m)*(planets[j].m)*dx)/pow(dr2,1.5);
@@ -172,11 +173,13 @@ void solarsystem::RungeKuttamethod(double dt,int n){
     k2=Mat<double>(this->numplanets*3,2);
     k3=Mat<double>(this->numplanets*3,2);
     k4=Mat<double>(this->numplanets*3,2);
-    ofstream RungeKutta_position;
-    RungeKutta_position.open("Rungekuttaposition.txt");
     //-----------------------------------------------------------------------
+    ofstream RungeKutta_position;
     ofstream kinPotFile2;
-    kinPotFile2.open ("kinPotFile2.txt");
+    ofstream ergodicFile;
+    RungeKutta_position.open("Rungekuttaposition.txt");
+    kinPotFile2.open ("kinPotFileRK4.txt");
+    ergodicFile.open ("ergodic.txt");
     kinPotFile2<<setprecision(10)<<setw(30) <<"totalE"<<setprecision(10)<<setw(30) <<"totalK"<<setprecision(10)<<setw(30) <<"totalp";
     for (int i = 0; i < this->numplanets; i++){
         kinPotFile2<< setprecision(10)<<setw(30)<<"k"<<i<<setprecision(10)<<setw(30) <<"p"<<i;
@@ -189,123 +192,70 @@ void solarsystem::RungeKuttamethod(double dt,int n){
         k3=derivate(A+k2*(dt/2));
         k4=derivate(A+k3*dt);
         A=A+(1.0/6.0)*(k1+2*k2+2*k3+k4)*dt;
-        for (int z = 0; z<this->numplanets;z++){
-        RungeKutta_position << A(3*z,0)<<"         "<< A(3*z+1,0)<<"         "<< A(3*z+2,0)<<"         ";
-        }
-        RungeKutta_position<<endl;
-        //--------------------------------------------------------
-            kinPotEnergy2();
-            for (int k = 0; k < (this->numplanets*2+3); k++){
-                kinPotFile2<<numplanetsInSystem<<setw(30)<<vecKinpot[k];
+            kinPotEnergy();            
+            centermassfunction();
+            //keeping the track for the cetnermass.
+            for(int z = 0; z < this->numplanets; z++){
+            RungeKutta_position<< A(3*z,0)<<"         "<<A(3*z+1,0)<<"         "<<A(3*z+2,0)<<"         ";
+            }
+            RungeKutta_position<<centermass[0]<<"         "<<centermass[1]<<"         "<<centermass[2]<<"         "<<endl;
+            kinPotFile2<<numplanetsInSystem<<"       "<<theTotalEnergy;
+            for (int k = 0; k < this->numplanets; k++){
+                kinPotFile2<<setw(30)<<"         "<<potentialEnergy[k]<<"            "<<kineticEnergy[k];
             }
             kinPotFile2<<endl;
+            ergodicFile<<ergodic<<"         "<<i<<endl;
 
         //------------------------------------------------------------
     }
-
     kinPotFile2.close();
-    virial_output();
     RungeKutta_position.close();
+    ergodicFile.close ();
 }
 
-void solarsystem::addrandomplanet(double R_0){
+void solarsystem::addrandomplanet(){
     Planet randomplanet;
-    randomplanet.m=object.generateGaussianNoise(10,1);
+    randomplanet.m=object.generateGaussianNoise(100,1);
     
     randomplanet.velocity[0]=0;
     randomplanet.velocity[1]=0;
     randomplanet.velocity[2]=0;
     
-    randomplanet.position[0]=R_0*pow(dis(gen),(1.0/3.0))*sqrt((1-(pow(1-2*dis(gen),2))))*cos(2*M_PI*dis(gen));
-    randomplanet.position[1]=R_0*pow(dis(gen),(1.0/3.0))*sqrt((1-(pow(1-2*dis(gen),2))))*sin(2*M_PI*dis(gen));
-    randomplanet.position[2]=R_0*pow(dis(gen),(1.0/3.0))*(1-(2*dis(gen)));
+    double rand_r=dis(gen);
+    double rand_theta=dis(gen);
+    double rand_phi=dis(gen);
+
+    randomplanet.position[0]=R0*pow(rand_r,(1.0/3.0))*sqrt((1-(pow(1-2*rand_theta,2))))*cos(2*M_PI*rand_phi);
+    randomplanet.position[1]=R0*pow(rand_r,(1.0/3.0))*sqrt((1-(pow(1-2*rand_theta,2))))*sin(2*M_PI*rand_phi);
+    randomplanet.position[2]=R0*pow(rand_r,(1.0/3.0))*(1-(2*rand_theta));
     addplanet(randomplanet);
 }
 
-//------------------------------------------------------here we find the (total energy , total kinetic energy ,total potetnail,k1,p1,k2,p2, ...)
-void solarsystem::kinPotEnergy(){ //Verlet
-    //cout<<n;
-    numplanetsInSystem = 0;
-    vecKinpot = new double[ this->numplanets*2 + 3];
-    double kinetic;
+//here we calc the potenial energy and the kintic energy;
+void solarsystem::kinPotEnergy(){
+
+    kineticEnergy = new double[ this->numplanets];
+    average_kin = 0.0;
+    average_pot = 0.0;
+
+    double kinetic = 0.0;
     double potenial = 0.0;
     double totalKinetic = 0.0;
     double totalPotenial = 0.0;
+    double velocitySquared= 0.0;
 
-    //kinetic = 1/2 * m * v^2----------------
+    //kineticEnergy = 1/2 * m * v^2
     for (int i = 0; i < this->numplanets;i++){
-        kinetic = planets[i].velocity[0]*planets[i].velocity[0]+planets[i].velocity[1]*planets[i].velocity[1]+planets[i].velocity[2]*planets[i].velocity[2];
-        kinetic = 0.5*planets[i].m*kinetic;
-        vecKinpot[2*i+3] = kinetic;
-        kinetic = 0.0;
+        velocitySquared = A(3*i,1)*A(3*i,1)+A(3*i+1,1)*A(3*i+1,1)+A(3*i+2,1)*A(3*i+2,1);
+        kineticEnergy[i] = 0.5*planets[i].m*velocitySquared;
+
+        totalKinetic += kineticEnergy[i];
     }
+
     //potineal energy U = -G Mm/r----------------
+    potentialEnergy = new double[ this->numplanets];
     double r;
-
-
-    Mat<double> p = Mat<double>(this->numplanets,this->numplanets,fill::zeros);
-
-    for (int i = 0;i < this->numplanets; i++ ){
-        for (int j = i+1; j < this->numplanets; j++){
-            r = (planets[i].position[0]- planets[j].position[0])*(planets[i].position[0]- planets[j].position[0]) + (planets[i].position[1]- planets[j].position[1])*(planets[i].position[1]- planets[j].position[1])+(planets[i].position[2]- planets[j].position[2])*(planets[i].position[2]- planets[j].position[2]);
-            r = sqrt(r);
-            p(i,j)=-planets[i].m*planets[j].m*G/r;
-            p(j,i)=p(i,j);
-        }
-    }
-    for(int i = 0; i < this->numplanets; i++){
-        for(int j = 0; j < this->numplanets; j++){
-            potenial += p(i,j);
-            totalPotenial += p(i,j);
-
-        }
-        vecKinpot[2*i+4] = potenial;
-        potenial = 0;
-    }
-    for (int i = 0;i < this->numplanets; i++ ){
-           if ((vecKinpot[3+2*i]+vecKinpot[4+2*i])<0){
-               numplanetsInSystem += 1; // number of planet in the rotating system
-               totalKinetic += vecKinpot[3+2*i];
-           }
-           else{
-               totalPotenial -= vecKinpot[4+2*i];
-           }
-       }
-    totalPotenial = totalPotenial /2;
-    vecKinpot[0] = totalKinetic+totalPotenial;
-    vecKinpot[1] = totalKinetic;
-    vecKinpot[2] = totalPotenial;
-    //Virial analysis
-    for(int i=0;i<this->numplanets;i++){
-        average_kin[i]+=totalKinetic;
-        average_pot[i]+=totalPotenial;
-    }
-
-
-}
-//-----------------------------------------------------------------------
-
-void solarsystem::kinPotEnergy2(){ //RK4
-    numplanetsInSystem = 0;
-    vecKinpot = new double[ this->numplanets*2 + 3];
-    double kinetic;
-    double potenial = 0.0;
-    double totalKinetic = 0.0;
-    double totalPotenial = 0.0;
-
-    //kinetic = 1/2 * m * v^2----------------
-    for (int i = 0; i < this->numplanets;i++){
-        kinetic = A(3*i,1)*A(3*i,1)+A(3*i+1,1)*A(3*i+1,1)+A(3*i+2,1)*A(3*i+2,1);
-        kinetic = 0.5*planets[i].m*kinetic;//0.5*m*v^2
-
-        vecKinpot[2*i+3] = kinetic;
-        kinetic = 0.0;
-    }
-    //potineal energy U = -G Mm/r----------------
-    double r;
-
-
-    Mat<double> p = Mat<double>(this->numplanets,this->numplanets,fill::zeros);
+    Mat<double> p = Mat<double>(this->numplanets,this->numplanets,fill::zeros); //matrix p will include the potenail form all planets.
 
     for (int i = 0;i < this->numplanets; i++ ){
         for (int j = i+1; j < this->numplanets; j++){
@@ -313,56 +263,134 @@ void solarsystem::kinPotEnergy2(){ //RK4
             r = sqrt(r);
             p(i,j)=-planets[i].m*planets[j].m*G/r;
             p(j,i)=p(i,j);
+            totalPotenial += p(j,i);
         }
     }
+    //calcuting the potenial energy for each planet from the marix P
     for(int i = 0; i < this->numplanets; i++){
         for(int j = 0; j < this->numplanets; j++){
             potenial += p(i,j);
-            totalPotenial += p(i,j);
-
         }
-        vecKinpot[2*i+4] = potenial;
-        potenial = 0.0;
+        potentialEnergy[i] = potenial/2;
+        potenial = 0;
     }
-    for (int i = 0;i < this->numplanets; i++ ){
-           if ((vecKinpot[3+2*i]+vecKinpot[4+2*i])<0){
-               numplanetsInSystem += 1; // number of planet in the rotating system
-               totalKinetic += vecKinpot[3+2*i];
-           }
-           else{
-               totalPotenial -= vecKinpot[4+2*i];
-           }
-       }
-    totalPotenial = totalPotenial /2;
-    vecKinpot[0] = totalKinetic+totalPotenial;
-    vecKinpot[1] = totalKinetic;
-    vecKinpot[2] = totalPotenial;
+    theTotalEnergy = totalKinetic+totalPotenial;
+
     //Virial analysis
-    for(int i=0;i<this->numplanets;i++){
+     numplanetsInSystem = 0;
 
-        average_kin[i]+=totalKinetic;
-        average_pot[i]+=totalPotenial;
+    //clac the energy of the bound system ! virial !!!
+    for (int i = 0;i < this->numplanets; i++ ){
+        if (( kineticEnergy[i]+potentialEnergy[i])<0.0){
+            numplanetsInSystem += 1;
+            average_kin += kineticEnergy[i];
+            average_pot += potentialEnergy[i];
+        }
+
     }
 
-
+    ergodic = average_pot/average_kin;
 }
-//---------------------------------------------------------------
 
-void solarsystem::virial_output(){
-    double averageK = 0.0;
-    double averageP = 0.0;
-    ofstream virialanalysis;
-    virialanalysis.open("Virialkoefficient.txt");
-    for(int i=0;i<this->numplanets;i++){
+void solarsystem::centermassfunction(){
+    centermass = new double[3];//(centrMassX,centerMassY,centerMassZ)
+    double centermassX = 0.0;
+    double centermassY = 0.0;
+    double centermassZ = 0.0;
+    double totalmass = 0.0;
+    for (int i = 0;i<this->numplanets;i++){
 
-        if ((vecKinpot[3+2*i]+vecKinpot[4+2*i])<0){
-            cout<<i<<endl;
-            averageK += average_kin[i];
-            averageP += average_pot[i];
+     if (( kineticEnergy[i]+potentialEnergy[i])<0.0){
+        totalmass  += planets[i].m;
+        centermassX += A(3*i,0)*planets[i].m;
+        centermassY += A(3*i+1,0)*planets[i].m;
+        centermassZ += A(3*i+2,0)*planets[i].m;
+      }
+  }
+    centermassX = centermassX/totalmass;
+    centermassY = centermassY/totalmass;
+    centermassZ = centermassZ/totalmass;
 
+    centermass[0] = centermassX;
+    centermass[1] = centermassY;
+    centermass[2] = centermassZ;
+}
+void solarsystem::radialDensity(){
+
+     double* radialDistance = new double[this->numplanets];
+     double x = 0;
+     double y = 0;
+     double z = 0;
+     double averageDistance = 0.0;
+     double Nplanets = 0;
+     double standardDeviation = 0.0;
+
+     //looping though all bonded planets and clac the radial distance
+     for (int i = 0;i<this->numplanets;i++){
+        if (kineticEnergy[i]+potentialEnergy[i]<0){
+
+            x = centermass[0] - A(3*i,0);
+            y = centermass[1] - A(3*i+1,0);
+            z = centermass[2] - A(3*i+2,0);
+            double k = x*x+y*y+z*z;
+
+            radialDistance[i] = sqrt(k);
+            averageDistance += radialDistance[i];
+            Nplanets += 1.0;
+
+        }else{
+            radialDistance[i] = 200; // just a big number to avoid worng calc(this plant is not in the system anyway).
         }
     }
-    averageP = averageP;
-    virialanalysis<< averageP/averageK<<endl;
-    virialanalysis.close();
+
+    averageDistance = averageDistance/Nplanets;
+
+     //standard deviation
+     for (int i = 0;i<this->numplanets;i++){
+        if (radialDistance[i] < 200){
+            standardDeviation += (radialDistance[i] - averageDistance)*(radialDistance[i] - averageDistance);
+        }
+    }
+     standardDeviation = sqrt(standardDeviation/Nplanets);
+
+     cout<<"number of planet in the system : "<<Nplanets<<endl;
+     cout<<"average distance" <<averageDistance<<endl;
+     cout<<"standard deviation" <<standardDeviation<<endl;
+     double m= 0.0;
+     for (int i=0; i < this->numplanets;i++){
+     m += planets[i].m;
+    }
+     cout<<m<<endl;
+
+   double maxRadius = 100;
+   double step = 0.001;
+   double N = 0.0; // number of planet inside a givin radius.
+   double volume = 0.0;
+   int steps =  ((int)maxRadius/step + 1);
+   double* density = new double[steps];
+   int loopintger = 0;// just an intger for the loop;
+
+
+     for (double r = 0.0; r < maxRadius; r += step){
+       for (int i = 0;i < numplanetsInSystem; i++){
+           if(radialDistance[i]<r){
+               N +=1;
+           }
+         }
+       volume = 4/3 * r*r*r*M_PI;
+       density[loopintger]= N/volume;
+       N=0;
+       loopintger++;
+     }
+
+    //write data to a folder
+    ofstream radialDensityTxt;
+    radialDensityTxt.open ("radialDensity.txt");
+    loopintger=0;
+    for (double r = 0.0; r < maxRadius; r += step){
+       radialDensityTxt<<r<<"         "<<density[loopintger]<<endl;
+       loopintger++;
+    }
+
+     radialDensityTxt.close();
 }

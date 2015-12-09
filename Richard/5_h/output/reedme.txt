@@ -1,6 +1,0 @@
-planets 		planet in the system 		avrage distance 	standar deviation   mass 
-
-1200		    788							9.97714				 	7.2123			3018.96
-600				383							12.7962					10.0002			3016.19	
-300	            163							18.5509					12.5015			3004.27
-150              93                         29.9863                 15.3104         3005.6
