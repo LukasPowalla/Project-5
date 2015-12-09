@@ -1,0 +1,64 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{makeidx}
+\usepackage{graphicx}
+\usepackage{fourier}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\title{Most important statements of the paper "Cold uniform spherical collapse revisited"}
+
+\lstset{language=C++,
+	keywordstyle=\bfseries\color{blue},
+	commentstyle=\itshape\color{red},
+	stringstyle=\color{green},
+	identifierstyle=\bfseries,
+	frame=single}
+\begin{document}
+
+\maketitle
+\newpage
+
+\section{}
+
+
+1.: minimal radius depending on number of particles $N$.
+
+\begin{equation}
+	R_{min} \propto N^{-\frac{1}{3}}
+\end{equation}
+2.: Fraction of particles with positive energy $f^p$ can be approximated good through
+
+\begin{equation}
+	f^p(N) \approx a + b \cdot log(N)
+\end{equation}
+
+with $a = 0.048$ and $b = 0.022$, or
+
+\begin{equation}
+	f^p(N) = 0.1 \cdot N^{0.1}
+\end{equation}
+3.: kinetic energy per unit ejected mass $\frac{K^P}{f^p}$ ($K^p$ is the sum over the kinetic energy of all emitted particles)
+
+\begin{equation}
+	\frac{K^P}{f^p} \propto N^{\frac{1}{3}}
+\end{equation}
+4.: Radial density profiles of the clusters in equilibrium $n(r)$ can be approximated by 
+
+\begin{equation}
+	n(r) = \frac{n_0}{1+(\frac{r}{r_0})^4}
+\end{equation} 
+with $r_0 \propto N^{-\frac{1}{3}}$ and $n_0 \propto N^2$.
+
+
+
+
+
+
+\end{document}
