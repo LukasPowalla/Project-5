@@ -1,0 +1,2 @@
+\select@language {english}
+\contentsline {section}{\numberline {1}Most important statements of the paper "Cold uniform spherical collapse revisited"}{3}{section.1}
