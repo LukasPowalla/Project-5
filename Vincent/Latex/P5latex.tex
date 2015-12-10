@@ -62,21 +62,21 @@ Then the acceleration of star $i$ is given by
 
 \subsection{Energy}
 
-In the project we are going to observe the kinetic and potential energy of systems of particles, which interact via the gravitational force. The kinetic energy of a mass $m$ with velocity $v$ is given by $E_{Kin} = \frac{1}{2} m v^2$. Because we have $n$ particles we just need to sum over the kinetic energies of all particles to get the kinetic energy of the system.
+In the project we are going to observe the kinetic and potential energy of systems of particles, which interact via the gravitational force. The kinetic energy of a particle with mass $m$ and velocity $v$ is given by $E_{Kin} = \frac{1}{2} m v^2$. Because we have $n$ particles we just need to sum over the kinetic energies of all particles to get the kinetic energy of the system.
 
 \begin{equation}	
 \label{en1}
 E_{Kin} = \sum_{i = 1}^{n} \frac{1}{2} m_i v_i^2
 \end{equation}
 
-The potential energy of a system is given by $- \mathbf{\nabla} E_{Pot} = \mathbf{F}$. Hence we have $\frac{\partial}{\partial x_i}E_{Pot} =- F_{x_i}$ and can get a potential energy by trough integration:
+The potential energy of a system is given by $\mathbf{\nabla} E_{Pot} = - \mathbf{F}$. Hence we have $\frac{\partial}{\partial x_i}E_{Pot} =- F_{x_i}$ and can get a potential energy by trough integration:
 
 \begin{equation}
 \label{en2}
 	E_{Pot} = - \int dx' F_{x}(x', y ,z)
 \end{equation}
 
-To get the potential energy of our system, we add one particle after an other from an infinite distance to the system. Each time we add a particle $i$ we calculate its potential energy $V_i$ (negative work that is needed to move the particle to an infinite distance to the system) using \eqref{en2}. We do this until we have $n$ particles in the system. Then the potential energy of our system is given by the sum over all $V_i$. If we add the particle 1 there is no force yet, hence $V_1 = 0$. When adding the second particle there is a force between particle 1 and 2. Adding the particle number $i$, there are $i-1$ forces acting on particle $i$(we write the force between particle $i$ and $j$, acting on $i$, as $F_{ij}$). Hence $V_i$ can simply be calculated by
+To get the potential energy of our system, we add one particle after an other from an infinite distance to the system. Each time we add a particle $i$ we calculate its potential energy $V_i$ (negative work that is needed to move the particle from an infinite distance to the system) using \eqref{en2}. We do this until we have $n$ particles in the system. Then the potential energy of our system is given by the sum over all $V_i$. If we add the particle 1 there is no force yet, hence $V_1 = 0$. When adding the second particle there is a force between particle 1 and 2. Adding the particle number $i$, there are $i-1$ forces acting on particle $i$(we write the force between particle $i$ and $j$, acting on $i$, as $F_{ij}$). Hence $V_i$ can simply be calculated by
 
 \begin{equation}
 \label{en3}
@@ -107,13 +107,15 @@ Setting \eqref{en5} in \eqref{en4} we get the potential energy of our system, wh
 \subsection{Open Clusters}
 
 Open clusters are groups of a few thousand stars that were formed from the same giant molecular cloud and have roughly the same age. They have yet only been found in spiral and irregular galaxies, in which active star formation is occurring.
-Many open clusters ate unstable and have a small enough mass that the escape velocity of the system is lower than the average velocity of the constituent stars. These clusters will rapidly disperse within a few million years\footnote{Source: \url{https://en.wikipedia.org/wiki/Open_cluster}}.
+Many open clusters are unstable and have a small enough mass that the escape velocity of the system is lower than the average velocity of the constituent stars. These clusters will rapidly disperse within a few million years\footnote{Source: \url{https://en.wikipedia.org/wiki/Open_cluster}}.
 
-The open cluster we simulate in this project will have the starting conditions of a cold collapse. This means, that the particles start with little or no initial velocity. In addition to the that, the $N$ particles, we simulate, will be uniformly distributed at the starting time inside a sphere with given radius $R_0$. Our particles masses will be distributed by a Gaussian distribution around ten solar masses with a standard deviation of one solar mass.
+The open cluster we simulate in this project will have the starting conditions of a cold collapse. This means, that the particles start with little or no initial velocity. In addition to the that, the $N$ particles, we simulate, will be randomly uniformly distributed at the starting time inside a sphere with given radius $R_0$. Our particles masses will be distributed by a Gaussian distribution around ten solar masses with a standard deviation of one solar mass.
+
+%If the number of particles goes against infinity ($N \to \infty$), the system should collapse into singularity after a time %$\tau_{crunch} = \sqrt{\frac{3\pi}{32 G \rho_0}}$
 
 \subsection{Verlet algorithm}
 
-The Verlet algorithm is one method that is important for this project to numerically solve the equation of motion having the form of equation \eqref{eq:gra2}. 
+The Verlet algorithm is one method that is important to numerically solve a equation of motion having for example the form of equation \eqref{eq:gra2}. 
 
 Using a taylor expansion for a function $x(t)$ around the point $t_0 = t_i$ and then setting $t = t_i + h$ and $t = t_i - h$, we get the equations
 
@@ -126,14 +128,14 @@ x(t_i + h) = x_i + h  x^{'}(t_i) + \frac{h^2}{2}  x^{''}(t_i) + \frac{h^3}{3!}  
 x(t_i - h) = x_i - h  x^{'}(t_i) + \frac{h^2}{2}  x^{''}(t_i) - \frac{h^3}{3!}  x^{'''}(t_i) + \sigma (h^4)
 \end{equation}
 
-For an easier overview it is useful to use the notation $x(t_i) = x_i$, $x(t_i \pm h) = x_{i \pm 1}$ and $x^{''} = a(x, t)$. By adding up equation equation \eqref{v1} and \eqref{v2} we come to the equation
+For an easier overview it is useful to use the notation $x(t_i) = x_i$, $x(t_i \pm h) = x_{i \pm 1}$ and $x^{''} = a(x, t)$. By adding up equation \eqref{v1} and \eqref{v2} we get the equation
 
 \begin{equation}
 \label{v3}
 	x_{i+1} = 2 x_i - x_{i-1} + a(x_i, t_i) \cdot h^2 + \sigma(h^4)
 \end{equation}
 
-Which gives us a method to determine all $x_i$, if the boundary conditions are known. It can be seen that due to the $x_{i-1}$ part, the algorithm is not self-starting. Hence $x_1$ must be found, using an other method (for example Euler's method).
+Which gives us a method to determine all $x_i$, if the boundary conditions are known. It can be seen that due to the $x_{i-1}$ part in \eqref{v3}, the algorithm is not self-starting. Hence $x_1$ must be found, using an other method (for example Euler's method).
 
 \subsubsection{Velocity Verlet algorithm}
 
@@ -250,7 +252,7 @@ In section \ref{subsubsec:rc4} it could be seen, that with the fourth order Rung
 \frac{d\mathbf{v}}{dt} = G \sum_{j \neq i}^{n} m_j \frac{\mathbf{r}_{ij}}{r_{ij}^3}
 \end{align}
 
-Now we can use the RK4 method $\mathbf{r}$ and $\mathbf{v}$ simultaneously. Because we use this method in three dimensions and the fact, that we have a second-order ODE, the equations for the RK4 method look different than in section \ref{subsubsec:rc4}. The following steps give in the right order, how to approach the system, when we do a numerically calculation from the time $t_i$ to $t_{i+1}$. It has to be noted, that when we do a calculation for one particle, directly after it, the same time the calculation gets performed for the other particles. The index on the upper left side refer to the number of the particle and the index on the upper right side gives the information, if the value is belogs to the RK4 method for the location or the velocity.
+Now we can use the RK4 method $\mathbf{r}$ and $\mathbf{v}$ simultaneously. Because we use this method in three dimensions and the fact, that we have a second-order ODE, the equations for the RK4 method look different than in section \ref{subsubsec:rc4}. The following steps give in the right order, how to approach the system, when we do a numerically calculation from the time $t_i$ to $t_{i+1}$. It has to be noted, that when we do a calculation for one particle, directly after it, the same type of calculation gets performed for the other particles. The index on the upper left side of values refer to the number of the particle and the index on the upper right side gives the information, if the value is belogs to the RK4 method for the location or the velocity.
 
 \begin{align}
 \label{rc11}
