@@ -252,7 +252,7 @@ In section \ref{subsubsec:rc4} it could be seen, that with the fourth order Rung
 \frac{d\mathbf{v}}{dt} = G \sum_{j \neq i}^{n} m_j \frac{\mathbf{r}_{ij}}{r_{ij}^3}
 \end{align}
 
-Now we can use the RK4 method $\mathbf{r}$ and $\mathbf{v}$ simultaneously. Because we use this method in three dimensions and the fact, that we have a second-order ODE, the equations for the RK4 method look different than in section \ref{subsubsec:rc4}. The following steps give in the right order, how to approach the system, when we do a numerically calculation from the time $t_i$ to $t_{i+1}$. It has to be noted, that when we do a calculation for one particle, directly after it, the same time the calculation gets performed for the other particles. The index on the upper left side refer to the number of the particle and the index on the upper right side gives the information, if the value is belogs to the RK4 method for the location or the velocity.
+Now we can use the RK4 method $\mathbf{r}$ and $\mathbf{v}$ simultaneously. Because we use this method in three dimensions and the fact, that we have a second-order ODE, the equations for the RK4 method look different than in section \ref{subsubsec:rc4}. The following steps give in the right order, how to approach the system, when we do a numerically calculation from the time $t_i$ to $t_{i+1}$. It has to be noted, that when we do a calculation for one particle, directly after it, the same type of calculation gets performed for the other particles. The index on the upper left side of values refer to the number of the particle and the index on the upper right side gives the information, if the value is belogs to the RK4 method for the location or the velocity.
 
 \begin{align}
 \label{rc11}
