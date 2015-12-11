@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2015.11.6)  11 DEC 2015 22:39
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2015.11.6)  11 DEC 2015 23:29
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1078,73 +1078,85 @@ LaTeX Font Info:    Try loading font information for TS1+futs on input line 310
 File: ts1futs.fd 2004/03/26 Fontinst v1.926 font definitions for TS1/futs.
 )
 [7] [8]
-Overfull \hbox (12.62732pt too wide) in paragraph at lines 394--395
+Overfull \hbox (12.62732pt too wide) in paragraph at lines 398--399
 [][][][][][][][][][][][][][][][][][][][][][][][][][] 
  []
 
 
-Overfull \hbox (12.62732pt too wide) in paragraph at lines 395--396
+Overfull \hbox (12.62732pt too wide) in paragraph at lines 399--400
 [][][][][][][][][][][][][][][][][][][][][][][][][][] 
  []
 
 [9] [10] [11]
-Overfull \hbox (202.70892pt too wide) in paragraph at lines 598--600
+Overfull \hbox (202.70892pt too wide) in paragraph at lines 602--604
 [][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
 ][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][] 
  []
 
 
-Overfull \hbox (297.74973pt too wide) in paragraph at lines 602--603
+Overfull \hbox (297.74973pt too wide) in paragraph at lines 606--607
 [][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
 ][][][][][][][][][][][][][][][][][][][][][][][][][][] 
  []
 
-[12] [13] <Verletposition_sun_earth.png, id=551, 481.8pt x 361.35pt>
+[12] [13]
+Overfull \hbox (139.34839pt too wide) in paragraph at lines 708--709
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
+][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (91.82799pt too wide) in paragraph at lines 717--718
+[][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[14] [15] <Verletposition_sun_earth.png, id=636, 481.8pt x 361.35pt>
 File: Verletposition_sun_earth.png Graphic file (type png)
 
 <use Verletposition_sun_earth.png>
-Package pdftex.def Info: Verletposition_sun_earth.png used on input line 687.
+Package pdftex.def Info: Verletposition_sun_earth.png used on input line 786.
 (pdftex.def)             Requested size: 217.66211pt x 163.24559pt.
 
-<Rungekuttaposition_sun_earth.png, id=552, 481.8pt x 361.35pt>
+<Rungekuttaposition_sun_earth.png, id=637, 481.8pt x 361.35pt>
 File: Rungekuttaposition_sun_earth.png Graphic file (type png)
 
 <use Rungekuttaposition_sun_earth.png>
-Package pdftex.def Info: Rungekuttaposition_sun_earth.png used on input line 69
-2.
+Package pdftex.def Info: Rungekuttaposition_sun_earth.png used on input line 79
+1.
 (pdftex.def)             Requested size: 217.66211pt x 163.24559pt.
 
-<Verletposition_two_planets.png, id=553, 481.8pt x 361.35pt>
+<Verletposition_two_planets.png, id=638, 481.8pt x 361.35pt>
 File: Verletposition_two_planets.png Graphic file (type png)
 
 <use Verletposition_two_planets.png>
-Package pdftex.def Info: Verletposition_two_planets.png used on input line 697.
+Package pdftex.def Info: Verletposition_two_planets.png used on input line 796.
 
 (pdftex.def)             Requested size: 217.66211pt x 163.24559pt.
 
-<Rungekuttaposition_with_lines.png, id=554, 481.8pt x 361.35pt>
+<Rungekuttaposition_with_lines.png, id=639, 481.8pt x 361.35pt>
 File: Rungekuttaposition_with_lines.png Graphic file (type png)
 
 <use Rungekuttaposition_with_lines.png>
-Package pdftex.def Info: Rungekuttaposition_with_lines.png used on input line 7
-02.
+Package pdftex.def Info: Rungekuttaposition_with_lines.png used on input line 8
+01.
 (pdftex.def)             Requested size: 217.66211pt x 163.24559pt.
 
-<Verletposition2largetimesteps.png, id=557, 481.8pt x 361.35pt>
+<Verletposition2largetimesteps.png, id=642, 481.8pt x 361.35pt>
 File: Verletposition2largetimesteps.png Graphic file (type png)
 
 <use Verletposition2largetimesteps.png>
-Package pdftex.def Info: Verletposition2largetimesteps.png used on input line 7
-14.
+Package pdftex.def Info: Verletposition2largetimesteps.png used on input line 8
+13.
 (pdftex.def)             Requested size: 217.66211pt x 163.24559pt.
 
-<Rungekuttaposition_largetimesteps.png, id=558, 481.8pt x 361.35pt>
+<Rungekuttaposition_largetimesteps.png, id=643, 481.8pt x 361.35pt>
 File: Rungekuttaposition_largetimesteps.png Graphic file (type png)
 
 <use Rungekuttaposition_largetimesteps.png>
 Package pdftex.def Info: Rungekuttaposition_largetimesteps.png used on input li
-ne 719.
+ne 818.
 (pdftex.def)             Requested size: 217.66211pt x 163.24559pt.
 
 
@@ -1153,91 +1165,116 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[14
+[16
 
  <./Verletposition_sun_earth.png> <./Rungekuttaposition_sun_earth.png> <./Verle
 tposition_two_planets.png> <./Rungekuttaposition_with_lines.png>]
 LaTeX Font Info:    Font shape `T1/futs/bx/n' in size <7> not available
-(Font)              Font shape `T1/futs/b/n' tried instead on input line 744.
+(Font)              Font shape `T1/futs/b/n' tried instead on input line 843.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 744.
+(hyperref)                removing `math shift' on input line 843.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 744.
+(hyperref)                removing `math shift' on input line 843.
 
-<c1.png, id=574, 578.6418pt x 434.1018pt>
+<c1.png, id=659, 578.6418pt x 434.1018pt>
 File: c1.png Graphic file (type png)
  <use c1.png>
-Package pdftex.def Info: c1.png used on input line 752.
+Package pdftex.def Info: c1.png used on input line 851.
 (pdftex.def)             Requested size: 290.22107pt x 217.726pt.
- [15 <./Verletposition2largetimesteps.png> <./Rungekuttaposition_largetimesteps
+ [17 <./Verletposition2largetimesteps.png> <./Rungekuttaposition_largetimesteps
 .png>]
-<d2.png, id=585, 578.6418pt x 434.1018pt>
+<d2.png, id=669, 578.6418pt x 434.1018pt>
 File: d2.png Graphic file (type png)
  <use d2.png>
-Package pdftex.def Info: d2.png used on input line 758.
+Package pdftex.def Info: d2.png used on input line 857.
 (pdftex.def)             Requested size: 290.22107pt x 217.726pt.
 
-<d3.png, id=586, 578.6418pt x 434.1018pt>
+<d3.png, id=670, 578.6418pt x 434.1018pt>
 File: d3.png Graphic file (type png)
  <use d3.png>
-Package pdftex.def Info: d3.png used on input line 763.
+Package pdftex.def Info: d3.png used on input line 862.
 (pdftex.def)             Requested size: 290.22107pt x 217.726pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[16 <./c1.png (PNG copy)> <./d2.png (PNG copy)>]
-<e1.png, id=594, 578.6418pt x 434.1018pt>
+[18 <./c1.png (PNG copy)> <./d2.png (PNG copy)>]
+<e1.png, id=678, 578.6418pt x 434.1018pt>
 File: e1.png Graphic file (type png)
  <use e1.png>
-Package pdftex.def Info: e1.png used on input line 775.
+Package pdftex.def Info: e1.png used on input line 874.
 (pdftex.def)             Requested size: 290.22107pt x 217.726pt.
- [17 <./d3.png (PNG copy)> <./e1.png (PNG copy)>] <e2.png, id=604, 578.6418pt x
+ [19 <./d3.png (PNG copy)> <./e1.png (PNG copy)>] <e2.png, id=690, 578.6418pt x
  434.1018pt>
 File: e2.png Graphic file (type png)
 
 <use e2.png>
-Package pdftex.def Info: e2.png used on input line 783.
+Package pdftex.def Info: e2.png used on input line 882.
 (pdftex.def)             Requested size: 290.22107pt x 217.726pt.
- <f1.png, id=605, 578.6418pt x 434.1018pt>
+ <f1.png, id=691, 578.6418pt x 434.1018pt>
 File: f1.png Graphic file (type png)
  <use f1.png>
-Package pdftex.def Info: f1.png used on input line 788.
+Package pdftex.def Info: f1.png used on input line 887.
 (pdftex.def)             Requested size: 290.22107pt x 217.726pt.
- [18 <./e2.png (PNG copy)> <./f1.png (PNG copy)>]
-LaTeX Font Info:    Try loading font information for T1+cmtt on input line 819.
+
+<h.png, id=693, 578.6418pt x 434.1018pt>
+File: h.png Graphic file (type png)
+ <use h.png>
+Package pdftex.def Info: h.png used on input line 899.
+(pdftex.def)             Requested size: 217.66211pt x 163.29118pt.
+
+<h2.png, id=694, 578.6418pt x 434.1018pt>
+File: h2.png Graphic file (type png)
+ <use h2.png>
+Package pdftex.def Info: h2.png used on input line 904.
+(pdftex.def)             Requested size: 217.66211pt x 163.29118pt.
+
+<3dplot1.png, id=699, 578.6418pt x 434.1018pt>
+File: 3dplot1.png Graphic file (type png)
+ <use 3dplot1.png>
+Package pdftex.def Info: 3dplot1.png used on input line 914.
+(pdftex.def)             Requested size: 217.66211pt x 163.29118pt.
+
+<3dplot3.png, id=700, 578.6418pt x 434.1018pt>
+File: 3dplot3.png Graphic file (type png)
+ <use 3dplot3.png>
+Package pdftex.def Info: 3dplot3.png used on input line 919.
+(pdftex.def)             Requested size: 217.66211pt x 163.29118pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[20 <./e2.png (PNG copy)> <./f1.png (PNG copy)>] [21 <./h.png (PNG copy)> <./h2
+.png (PNG copy)> <./3dplot1.png (PNG copy)> <./3dplot3.png (PNG copy)>]
+LaTeX Font Info:    Try loading font information for T1+cmtt on input line 945.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 823.
- [19
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 949.
+ [22
 
 ]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 823.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 949.
 
 (./project5_merged.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 823.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 823.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 949.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 949.
 Package rerunfilecheck Info: File `project5_merged.out' has not changed.
 (rerunfilecheck)             Checksum: 12DFA72ADF4685845F061596F988DFAA;1645.
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 823.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 949.
  ) 
 Here is how much of TeX's memory you used:
- 11550 strings out of 493085
- 165437 string characters out of 6136917
- 312944 words of memory out of 5000000
- 14430 multiletter control sequences out of 15000+600000
- 102249 words of font info for 118 fonts, out of 8000000 for 9000
+ 11696 strings out of 493085
+ 167440 string characters out of 6136917
+ 311944 words of memory out of 5000000
+ 14489 multiletter control sequences out of 15000+600000
+ 103208 words of font info for 121 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  42i,14n,58p,1689b,1897s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t1.enc}{/usr/share/texliv
@@ -1248,10 +1285,10 @@ ic/fourier/fourier-ms.pfb></usr/share/texlive/texmf-dist/fonts/type1/adobe/utop
 ia/putb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/adobe/utopia/putr8a.pf
 b></usr/share/texlive/texmf-dist/fonts/type1/adobe/utopia/putri8a.pfb></usr/sha
 re/texmf/fonts/type1/public/cm-super/sftt1000.pfb>
-Output written on project5_merged.pdf (19 pages, 274788 bytes).
+Output written on project5_merged.pdf (22 pages, 337934 bytes).
 PDF statistics:
- 729 PDF objects out of 1000 (max. 8388607)
- 676 compressed objects within 7 object streams
- 382 named destinations out of 1000 (max. 500000)
- 261 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 844 PDF objects out of 1000 (max. 8388607)
+ 783 compressed objects within 8 object streams
+ 462 named destinations out of 1000 (max. 500000)
+ 281 words of extra memory for PDF output out of 10000 (max. 10000000)
 

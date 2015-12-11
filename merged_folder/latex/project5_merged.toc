@@ -18,9 +18,9 @@
 \contentsline {subsection}{\numberline {3.2}Velocity-verlet-algorithm}{10}{subsection.3.2}
 \contentsline {subsection}{\numberline {3.3}Runge Kutta-Method}{11}{subsection.3.3}
 \contentsline {subsection}{\numberline {3.4}Additional methods}{12}{subsection.3.4}
-\contentsline {section}{\numberline {4}Results}{14}{section.4}
-\contentsline {subsection}{\numberline {4.1}Results of the two-body-system}{14}{subsection.4.1}
-\contentsline {subsection}{\numberline {4.2}Results of the $N$-body system}{15}{subsection.4.2}
-\contentsline {section}{\numberline {5}Discussion}{19}{section.5}
-\contentsline {section}{\numberline {6}Conclusion}{19}{section.6}
-\contentsline {section}{\numberline {7}Source code}{19}{section.7}
+\contentsline {section}{\numberline {4}Results}{16}{section.4}
+\contentsline {subsection}{\numberline {4.1}Results of the two-body-system}{16}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}Results of the $N$-body system}{17}{subsection.4.2}
+\contentsline {section}{\numberline {5}Discussion}{22}{section.5}
+\contentsline {section}{\numberline {6}Conclusion}{22}{section.6}
+\contentsline {section}{\numberline {7}Source code}{22}{section.7}
