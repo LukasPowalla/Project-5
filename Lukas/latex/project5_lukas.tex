@@ -589,14 +589,15 @@ However, it was hard to find out a difference of the two solvers for very long t
 The plot of the trajectories of both methods look qualitatively good. That means that both algorithms are stable. In both methods, the earth orbits the sun in a stable orbit. 
 In order to say something about the accuracy of the algorithms, we looked at the total energy of the system. We calculated the quotient of the total energy of the system at the end of the calculations and the total energy of the system at the beginning of the calculations. (a corresponds to 1 year and au to 1 astronomical unit) We found out that for large times, RK4-algoritm is a bit more precise than the Verlet-algorithm. However, RK4 is numerically much more expensive.(comparing FLOPS and computation time) (see table \ref{TWOB_Energy_analysis} for Energy analysis) 
 \begin{table}[h]
+\centering
 \caption{Analysis of energy conservation of Verlet/RK4-algorithm for dt=0.01 and n=10000000. This corresponds to 10000 years. We are comparing the total energy in the beginning wit the total energy in the end. Before doing that, we convinced ourselves that both methods are stable \label{TWOB_Energy_analysis}}
 \begin{tabular}{c|c|c}
 &Verlet & RK4 \\
 \hline \hline
-$E_{tot,i}$in $\frac{M_o au^2}{a^2}$ &5.9217 $10^{-5}$ &5.9217 $10^{-5}$ \\
-$E_{tot,f}$in $\frac{M_o au^2}{a^2}$ &5.9159 $10^{-5}$ &5.9217 $10^{-5}$ \\
+$E_{tot,i}$in $\frac{M_o au^2}{a^2}$ &5.92174 $10^{-5}$ &5.92174 $10^{-5}$ \\
+$E_{tot,f}$in $\frac{M_o au^2}{a^2}$ &5.91593 $10^{-5}$ &5.92173 $10^{-5}$ \\
 \hline
-$\frac{E_{tot,f}}{E_{tot,i}}$ & 0.99901& 0.99999\\
+$\frac{E_{tot,f}}{E_{tot,i}}$ & 0.99902& 0.99999\\
 \end{tabular}
 \end{table}
 
