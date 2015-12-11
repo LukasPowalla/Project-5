@@ -28,15 +28,16 @@ public:
     double* centermass; // save the position of the centermass.
 
     double* finalEnergy;//total Energy of i-th particle at the last timestep
-    double average_kin; // <k>*N
-    double average_pot; // <V>*N
+    double total_kin; // <k>*N
+    double total_pot; // <V>*N
     //constants and vectors used for the method
     double R0=20;
     double ergodic;
     double averagemass=10;
     int numplanets;
     double G;
-    double epsilon=0.2;
+    double epsilon=0.29;
+   //double epsilon=0.0000;
     vector<Planet> planets;
     Mat<double> A;
     Mat<double> dA;

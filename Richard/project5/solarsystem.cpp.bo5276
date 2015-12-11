@@ -56,13 +56,13 @@ void solarsystem::VelocityVerlet(double dt,int n){
             centermassfunction();
             //keeping the track for the cetnermass.
             planetpositionVerlet<<centermass[0]<<"         "<<centermass[1]<<"         "<<centermass[2]<<"         "<<endl;
-            //kinPotFile<<theTotalEnergy<<"            "<<k<<endl; //total energy conserved.
-           // kinPotFile<<(this->numplanets-numplanetsInSystem)*1.0/this->numplanets<<"            "<<k<<endl;
-            kinPotFile<<k<<"       "<<total_kin<<"         "<<total_pot<<"       "<<total_kin+total_pot<<endl;//energy of the system
+            kinPotFile<<theTotalEnergy<<"            "<<k<<endl; //total energy conserved.
+            //kinPotFile<<(this->numplanets-numplanetsInSystem)*1.0/this->numplanets<<"            "<<k<<endl;
+            //kinPotFile<<k<<"       "<<total_kin<<"         "<<total_pot<<"       "<<total_kin+total_pot<<endl;//energy of the system
             for (int i = 0; i < (this->numplanets); i++){
               //  kinPotFile<<setw(30)<<"         "<<potentialEnergy[i]<<"            "<<kineticEnergy[i];
             }
-           ergodicFile<<ergodic<<"         "<<k<<endl;
+            ergodicFile<<ergodic<<"         "<<k<<endl;
             kinPotFile<<endl;
 
     }
@@ -217,7 +217,7 @@ void solarsystem::RungeKuttamethod(double dt,int n){
 
 void solarsystem::addrandomplanet(){
     Planet randomplanet;
-    randomplanet.m=object.generateGaussianNoise(averagemass,1);
+    randomplanet.m=object.generateGaussianNoise(10,1);
     
     randomplanet.velocity[0]=0;
     randomplanet.velocity[1]=0;
@@ -240,6 +240,7 @@ void solarsystem::kinPotEnergy(){
     total_kin = 0.0;
     total_pot = 0.0;
 
+    double kinetic = 0.0;
     double potenial = 0.0;
     double totalKinetic = 0.0;
     double totalPotenial = 0.0;
@@ -364,7 +365,7 @@ void solarsystem::radialDensity(){
      cout<<m<<endl;
 
    double maxRadius = 10;
-   double step = 0.5;
+   double step = 0.1;
    double N = 0.0; // number of planet inside a givin radius.
    double volume = 0.0;
    int steps =  ((int)maxRadius/step + 1);
@@ -372,14 +373,13 @@ void solarsystem::radialDensity(){
    int loopintger = 0;// just an intger for the loop;
 
 
-     for (double r = step; r < maxRadius; r += step){
+     for (double r = 0; r < maxRadius; r += step){
        for (int i = 0;i < numplanetsInSystem; i++){
-           if((radialDistance[i]<r)&(radialDistance[i]>(r-step))){
+           if((radialDistance[i]<r)){
                N +=1;
            }
          }
-       volume = 4.0/3.0 * M_PI* (r)*(r)*(r);
-       volume = volume - 4.0/3.0 * M_PI* (r -step)*(r -step)*(r-step);
+       volume = 4/3 * M_PI* (r)*(r)*(r);
        density[loopintger]= N/volume;
        N=0;
        loopintger++;
@@ -389,7 +389,7 @@ void solarsystem::radialDensity(){
     ofstream radialDensityTxt;
     radialDensityTxt.open ("radialDensity.txt");
     loopintger=0;
-    for (double r = step; r < maxRadius; r += step){
+    for (double r = 0; r < maxRadius; r += step){
        radialDensityTxt<<r<<"         "<<density[loopintger]<<endl;
        loopintger++;
     }

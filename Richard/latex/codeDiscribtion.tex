@@ -145,6 +145,103 @@ void solarsystem::centermassfunction(){
     centermass[2] = centermassZ;
 }
 \end{lstlisting}
+
+Here we have the radial density function which calculate the average distance and the standard deviation of the particles as well. To calculate the radial density we first introduce a radial distance vector which tells the radius for each particle from the center of mass. In the first part of this function we test if the particle is bounded and store the distance to the center of mass. If it's not bounded we just put a huge distance(200), so we don't include this later in the radial density. The next step is to calculate the radial density. We loop over each particle and check if it has a radius in the region r to $r + step$, then we divide by the volume of a sphere with radius $r + step$ minus a sphere with radius $r$ to get the radial density.  
+     
+ \begin{lstlisting}
+ void solarsystem::radialDensity(){
+
+     double* radialDistance = new double[this->numplanets];
+     double x = 0;
+     double y = 0;
+     double z = 0;
+     double averageDistance = 0.0;
+     double Nplanets = 0;
+     double standardDeviation = 0.0;
+
+     //looping though all bonded planets and clac the radial distance
+     for (int i = 0;i<this->numplanets;i++){
+        if (kineticEnergy[i]+potentialEnergy[i]<0){
+
+            x = centermass[0] - A(3*i,0);
+            y = centermass[1] - A(3*i+1,0);
+            z = centermass[2] - A(3*i+2,0);
+            double k = x*x+y*y+z*z;
+
+            radialDistance[i] = sqrt(k);
+            averageDistance += radialDistance[i];
+            Nplanets += 1.0;
+
+        }else{
+            radialDistance[i] = 200; // just a big number to avoid worng calc(this plant is not in the system anyway).
+        }
+    }
+
+    averageDistance = averageDistance/Nplanets;
+
+     //standard deviation
+     for (int i = 0;i<this->numplanets;i++){
+        if (radialDistance[i] < 200){
+            standardDeviation += (radialDistance[i] - averageDistance)*(radialDistance[i] - averageDistance);
+        }
+    }
+     standardDeviation = sqrt(standardDeviation/Nplanets);
+
+     cout<<"number of planet in the system : "<<Nplanets<<endl;
+     cout<<"average distance" <<averageDistance<<endl;
+     cout<<"standard deviation" <<standardDeviation<<endl;
+     double m= 0.0;
+     for (int i=0; i < this->numplanets;i++){
+     m += planets[i].m;
+    }
+     cout<<m<<endl;
+
+   double maxRadius = 10;
+   double step = 0.5;
+   double N = 0.0; // number of planet inside a givin radius.
+   double volume = 0.0;
+   int steps =  ((int)maxRadius/step + 1);
+   double* density = new double[steps];
+   int loopintger = 0;// just an intger for the loop;
+
+
+     for (double r = step; r < maxRadius; r += step){
+       for (int i = 0;i < numplanetsInSystem; i++){
+           if((radialDistance[i]<r)&(radialDistance[i]>(r-step))){
+               N +=1;
+           }
+         }
+       volume = 4.0/3.0 * M_PI* (r)*(r)*(r);
+       volume = volume - 4.0/3.0 * M_PI* (r -step)*(r -step)*(r-step);
+       density[loopintger]= N/volume;
+       N=0;
+       loopintger++;
+     }
+
+    //write data to a folder
+    ofstream radialDensityTxt;
+    radialDensityTxt.open ("radialDensity.txt");
+    loopintger=0;
+    for (double r = step; r < maxRadius; r += step){
+       radialDensityTxt<<r<<"         "<<density[loopintger]<<endl;
+       loopintger++;
+    }
+
+     radialDensityTxt.close();
+}
+  \end{lstlisting}
+  
+  \begin{tabular}{c|c|c}
+Number of particles & average distance&  standard deviation\\
+\hline \hline
+50 & 11.283 & 15.02875  \\
+100 & 11.2452 & 14.9623  \\
+200 & 9.81885 & 15.2545  \\
+400 & 6.56 & 11.6193 \\
+800 & 5.298 & 6.749 \\
+\end{tabular}
+
+With N increasing number of particles, the average distance and the standard deviation of the particles decreases.  
  
   
 \end{document}

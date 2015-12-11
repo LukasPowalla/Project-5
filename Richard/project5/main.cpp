@@ -24,7 +24,7 @@ int main()
     Planet p2(1,0,0,0,6,0,0.000001);
     mysystem.addplanet(p1);
     mysystem.addplanet(p2);*/
-    mysystem.VelocityVerlet(0.001,1000);
+    mysystem.VelocityVerlet(0.001,4000);
     //mysystem.RungeKuttamethod(0.001,3000);
 
     /*for(int k=0;k<numberofplanets;k++){
