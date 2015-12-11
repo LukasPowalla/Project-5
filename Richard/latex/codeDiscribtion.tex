@@ -120,5 +120,29 @@ p=
 \end{bmatrix}
 \end{align} 
 then we make new for loop, potential energy for a particle n is the sum over p nrow, and the last step in this function is to calculate the total potential and kinetic of the system by summing over all the bounded particle with the if test "only the particles with minus total energy". 
-
+\begin{lstlisting} 
+void solarsystem::centermassfunction(){
+    centermass = new double[3];//(centrMassX,centerMassY,centerMassZ)
+    double centermassX = 0.0;
+    double centermassY = 0.0;
+    double centermassZ = 0.0;
+    double totalmass = 0.0;
+    for (int i = 0;i<this->numplanets;i++){
+     if (( kineticEnergy[i]+potentialEnergy[i])<0.0){
+        totalmass  += planets[i].m;
+        centermassX += A(3*i,0)*planets[i].m;
+        centermassY += A(3*i+1,0)*planets[i].m;
+        centermassZ += A(3*i+2,0)*planets[i].m;
+      }
+  }
+    centermassX = centermassX/totalmass;
+    centermassY = centermassY/totalmass;
+    centermassZ = centermassZ/totalmass;
+    centermass[0] = centermassX;
+    centermass[1] = centermassY;
+    centermass[2] = centermassZ;
+}
+\end{lstlisting}
+ 
+here where we calculate the center of mass. We loop over all bounded particles $center of mass = \frac{\sum\limits_{i=1}^n mi*position}{m} $  
 \end{document}
