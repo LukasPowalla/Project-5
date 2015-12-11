@@ -29,11 +29,19 @@
 \tableofcontents
 \newpage
 
+\begin{abstract}
+This report by Richard Absah, Vincent Noculak, Lukas Powalla and Johannes Scheller for the course "FYS3150/4150 - Computational Physics" at the Universitetet i Oslo deals with the computational simulation of a galaxy model. It contains different approaches on solving the differential equations resulting from Newton's law of universal gravitation for objects (e.g. stars) in space. The authors will introduce two algorithms, Velocity Verlet and Runge-Kutta, to solve these differential equations and show both of them in use. They will compare there advantages and disadvantages and finally justify their chose of using Velocity Verlet to simulate n-body system like galaxies. These simulations are used to obtain knowledge about the behaviour of large particle clusters in space, esp. about the collapses these structures perform. Moreover, the authors try to prove powerful statements like the virial theorem by their simulations. The paper ends with an discussion about the future use of the methods use, but also about the problems that occurred during the project. Thus, it will give a small outlook on the limits of the algorithms for future use.
+\end{abstract}
 \section{Introduction}
 
-In this project we are going to simulate open clusters using Newton's law of universal gravitation. We are going to look at the time an open cluster with a cold collapse would need to collapse into singularity and observe the energy conservation and distribution of potential and kinetic energy. On what properties does it depend how many particles get ejected from the cluster and how do those particles change the energy of the system? The equilibrium state and its radial partial density are going to be observed too.
+When people observe stellar objects like stars or even bigger structures, i.e. galaxies or clusters of galaxies, they soon run into trouble. Despite the fact that many observations by telescopes - no matter with which wavelength they operate - have a very limited accuracy, it is just not possible to obtain precise knowledge about the long term evolution of the motions of these objects and structures in a single lifetime. Even if the first humans had started with exact observations of all the objects they could see, the data collected by theme would be young compared to the lifespan of a galaxy!
 
-We are doing these calculation by using the Velocity Verlet algorithm and the fourth order Runge-Kutta method. First we are going to compare both algorithms by simulating a to body system. Then we are going to study, which algorithm is more suitable for doing open cluster simulations and continue to simulate the open cluster with the more fitting algorithm.
+On the other hand, we have not found yet analytical solutions for the movements of more than two interacting bodies apart from some special cases with three bodies. As a result of this dilemma - we cannot observe the long-term motion of large stellar systems, but we cannot solve describe them analytically either -, we have to focus on computational simulations of these problems. This is what we are going to try in this project.
+
+In particular, we are going to simulate first two body systems and later on open clusters using Newton's law of universal gravitation. We are going to look at the time an open cluster with a cold collapse would need to collapse into singularity and observe the energy conservation and distribution of potential and kinetic energy. On what properties does it depend how many particles get ejected from the cluster and how do those particles change the energy of the system? The equilibrium state and its radial partial density are going to be observed too.
+
+We are doing these simulations by using both the Velocity Verlet algorithm and the fourth order Runge-Kutta method. First, we are going to compare both algorithms by simulating a to body system. Then we are going to study which algorithm is more suitable for simulating open clusters and continue with these simulations using the algorithm that turned out to be better.
+
 
 \section{Theory}
 
@@ -261,7 +269,7 @@ public:
     double* finalEnergy;
     vector<double> average_kin; 
     vector<double> average_pot; 
-    //constants and objects
+    //other constants and objects 
     double R0=20;
     double averagemass=10;
     int numplanets;
@@ -349,7 +357,8 @@ void solarsystem::addrandomplanet(){
 }
 \end{lstlisting}
 
-To use the matrix-representation of position and velocity, we wrote the function setmatrices(), which constructs a martix A, which contains all positions and velocities of the planets, which has been added to the system so far. The position of the planets can be found in the first column and the velocity in the second column. Every planet has 3 Coordinates. In addition to that, we construct the matrix dA, which is the derivative of the matrix A. This means that in the first column are velocities and in the second column are accelerations. For RK4, this is really useful because we can perform very understandable operations like $A=A+dA \cdot dt $.
+To use the matrix-representation of position and velocity, we wrote the function setmatrices(), which constructs a martix A, which contains all positions and velocities of the planets, which has been added to the system so far. The position of the planets can be found in the first column and the velocity in the second column. Every planet has 3 Space-Coordinates and 3 Velocity-Coordinates. In addition to that, we construct the matrix dA, which is the derivative of the matrix A. This means that in the first column are velocities and in the second column are accelerations. For RK4, this is really useful because we can perform very understandable operations like $A=A+dA \cdot dt $.
+Notice, that the velocity sits in the second column of A as well as in the first column of dA.
 \begin{align}
 A=
 \begin{bmatrix}
@@ -398,6 +407,7 @@ void solarsystem::setmatrices(){
 
 
 \subsection{Velocity-verlet-algorithm}
+In the following, we find the central steps for implementing the Velocity-verlet-algorithm. This is a non-selfstarting algorithm because we need to calculate v(t+0.5dt) before entering the loop of the algorithm. We are using the velocity in the first column of the matrix A for calculations.  
 \begin{lstlisting}
 void solarsystem::VelocityVerlet(double dt,int n){
   ...
@@ -408,11 +418,14 @@ void solarsystem::VelocityVerlet(double dt,int n){
       A.col(0)=A.col(0)+A.col(1)*dt;   // r(t+dt)
       calculateForces();               // a(t+dt)
       A.col(1)=A.col(1)+dt*dA.col(1);  // v(t+0.5dt) -> v(t+3/2dt)
+      for(int i=0;i<this->numplanets;i+=1){
+      dA.col(0)=A.col(1); //updating velocities in dA, not necessary
+        }
       }
   ...
 }
 \end{lstlisting}
-
+The function calculateForces() calculates the forces of all the planets and with that the acceleration and writes it into the matrix dA. The forces of the planetobjects are primarely used for local calculations. 
 \begin{lstlisting}
 void solarsystem::calculateForces(){
 
@@ -444,7 +457,6 @@ void solarsystem::calculateForces(){
     //update the matrix dA
     for(int i=0;i<this->numplanets;i+=1){
         for(int j=0;j<3;j++){
-            dA(3*i+j,0)=planets[i].velocity[j];
             dA(3*i+j,1)=planets[i].force[j]/planets[i].m;
         }
     }
@@ -453,8 +465,8 @@ void solarsystem::calculateForces(){
 \end{lstlisting}
 
 \subsection{Runge Kutta-Method}
+We use the matrix representation for the RK4-Method. We first calculate the derivatives of the matrix A at different times and store them in the matrices k1 to k4. Afterwards, we simply numerically integrate using the formula of RK4. In this representation, the algorithm is very compact and easily readable. 
 \begin{lstlisting}
-
 void solarsystem::RungeKuttamethod(double dt,int n){
     setmatrices();
     Mat<double> k1,k2,k3,k4;
@@ -473,6 +485,8 @@ void solarsystem::RungeKuttamethod(double dt,int n){
     }
 }
 \end{lstlisting}
+The function derivate( Mat<double> B) calculates the derivative of the matrix in the argument B. The function uses the positions stored in the matrix B to calculate the forces of the planets. Finally, we can calculate the accelerations on the planets using their mass. We write the velocity of the first column of B into the 0th column of dB and we write the calculated accelerations in the first column of dB. 
+In total, we calculated and return the derivative of the input matrix B.
 \begin{lstlisting}
 mat solarsystem::derivate( Mat<double> B){
     Mat<double> dC;
@@ -486,28 +500,30 @@ mat solarsystem::derivate( Mat<double> B){
             //calculate forces
             double Fx=(G*(planets[i].m)*(planets[j].m)*dx)/pow(dr2,1.5);
             double Fy=(G*(planets[i].m)*(planets[j].m)*dy)/pow(dr2,1.5);
-            double Fz=(G*(planets[i].m)*(planets[j].m)*dz)/pow(dr2,1.5);//until here B
-            //update planet properties (not necessary)
+            double Fz=(G*(planets[i].m)*(planets[j].m)*dz)/pow(dr2,1.5);
             dC(3*i,1)-=Fx;
             dC(3*j,1)+=Fx;
             dC(3*i+1,1)-=Fy;
             dC(3*j+1,1)+=Fy;
             dC(3*i+2,1)-=Fz;
-            dC(3*j+2,1)+=Fz;//returen dC with v from B and new acceleration
+            dC(3*j+2,1)+=Fz;
         }
     }
     for(int i=0;i<this->numplanets;i+=1){
         for(int j=0;j<3;j++){
             dC(3*i+j,1)=dC(3*i+j,1)/planets[i].m;
-            // cout << dC/planets[i].m<<endl;
         }
     }
     dC.col(0)=B.col(1);
-    return(dC);
+    return(dC);//return dC with velocity from B and new acceleration
 }
 \end{lstlisting}
 \section{Discussion}
 
 \section{Source code}
 
+\begin{thebibliography}{mustermarke}
+\bibitem[1]{Link1} 
+\bibitem[2]{Link2} 
+\end{thebibliography}
 \end{document}
