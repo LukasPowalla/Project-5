@@ -34,7 +34,7 @@
 
 \section{Execution}
 
-in order to analysis our data we need to find the potential energy and the kinetic energy at the time t. Down here is the KinpotEnergy void function which calculate the kinetic energy and potential energy for each particle. When ever this function i called in RK4 or verlet method it calculate this list for a time t.
+In order to analyse our data we need to find the potential energy and the kinetic energy at a given time $t$. Down here is the void function \emph{KinpotEnergy} which calculates both the kinetic and potential energy for each particle. When ever this function is called in our RK4 or verlet method it calculates these values for one time step.
 \begin{lstlisting}
 kineticEnergy <vector> //where we store each particle kinetic energy 
 potentialEnergy <vector> //where we store each particle potential energy 
@@ -106,9 +106,9 @@ void solarsystem::kinPotEnergy(){
     ergodic = total_pot/total_kin;
 }
 \end{lstlisting}
-in the first part pf the function we calculate the kinetic energy for each particle as $1 \frac{1}{2}m v(t)^2 $
+In the first part of the function, we calculate the kinetic energy for each particle as $1 \frac{1}{2}m v(t)^2 $
 
-in the second part we calculate all the possible potential energy between different particles in a matrix p. 
+In the second part, we calculate all the potentials between different particles in a matrix p in the following way:
  
 \begin{align}
 p=
@@ -119,7 +119,9 @@ p=
 \frac{-Gm_0m_n}{r} & \frac{-Gm_1m_n}{r} & \frac{-Gm_2m_n}{r} & ... & 0  \\
 \end{bmatrix}
 \end{align} 
-then we make new for loop, potential energy for a particle n is the sum over p nrow, and the last step in this function is to calculate the total potential and kinetic of the system by summing over all the bounded particle with the if test "only the particles with minus total energy". 
+Afterwards, we perform a new for loop, where we calculate the potential energy for a particle $i$ as the sum over al elements of the $i$th row, and finally calculate the total potential and kinetic of the system by summing only over the bounded particle by using an if test to get only the particles with negative total energy.
+
+In the method \emph{centermassfunction}, we calculate the centre of mass $\mathbf{r}_c$ of the system. We loop over all bounded particles $\mathbf{r}_c = \frac{\sum\limits_{i=1}^n m_i*\mathbf{r}_i}{m_\mathrm{total}}$
 \begin{lstlisting} 
 void solarsystem::centermassfunction(){
     centermass = new double[3];//(centrMassX,centerMassY,centerMassZ)
@@ -144,5 +146,5 @@ void solarsystem::centermassfunction(){
 }
 \end{lstlisting}
  
-here where we calculate the center of mass. We loop over all bounded particles $center of mass = \frac{\sum\limits_{i=1}^n mi*position}{m} $  
+  
 \end{document}
