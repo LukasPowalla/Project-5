@@ -1,0 +1,22 @@
+THIS FILE CONTAINS THE MAIN STRUCTURE OF OUR GITHUB FOLDER
+
+/literatureproject5.pdf				The article to be read for this project
+
+/Johannes/
+	Latex/					Includes a LaTeX File and PDF with description of some results and abstract as well as some of Richard's (!) graphs - included in final version
+
+/Lukas/
+	latex/					Includes Lucas' LaTeX file and graphs, mainly two body problem - included in final version
+	programs/				Some older programs that were not used in the end
+
+/merged_folder/					
+	latex/					*****THIS IS THE FOLDER CONTAINING THE FINAL REPORT*****
+
+/Richard/
+	latex/					LaTeX with description of Richard's functions - included in final version
+	plots/					Plots of exercices b) - h)
+	project5/				Program folder of the FINAL VERSIONS OF THE PROGRAMS AND ALGORITHMS
+
+/Vincent/
+	Latex/					LaTeX file with theory part, made by Vincent - included in final version
+	statements of the referenced paper/	Contains PDF with most important quotes from /literatureproject5.pdf
