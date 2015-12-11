@@ -69,6 +69,9 @@ void verletalgorithm(Planet p1,Planet p2,double dt, int n){
         p1.velocity[2]=p1.velocity[2]+p1.force[2]*dt/p1.m;
         p2.velocity[2]=p2.velocity[2]+p2.force[2]*dt/p2.m;
         verletposition<<p2.position[0]<<"  "<<p2.position[1]<<"  "<<p1.position[0]<<"  "<<p1.position[1]<<endl;
+        /*if(k==0||k==n){
+           verletposition<<p2.position[0]<<"  "<<p2.position[1]<<"  "<<p2.velocity[0]<<"  "<<p2.velocity[1]<<"  next planet  "<<p1.position[0]<<"  "<<p1.position[1]<<"  "<<p1.velocity[0]<<"  "<<p1.velocity[1]<<endl;
+        }*/
     }
     verletposition.close();
 
@@ -136,6 +139,9 @@ void rungeKuttaMethod(Planet p1,Planet p2, double dt, int n){
         k4=derivate(A+k3*dt,p1,p2);
         A=A+(1.0/6.0)*(k1+2*k2+2*k3+k4)*dt;
         RungeKutta_position <<A(3,0)<<"  "<<A(4,0)<<"  "<<A(0,0)<<"  "<<A(1,0)<<endl;
+        /*if(i==0||i==n){
+           RungeKutta_position <<A(3,0)<<"  "<<A(4,0)<<"  "<<A(3,1)<<"  "<<A(4,1)<<" next planet "<<A(0,0)<<"  "<<A(1,0)<<"  "<<A(0,1)<<"  "<<A(1,1)<<endl;
+        }*/
     }
     RungeKutta_position.close();
 }
@@ -145,8 +151,8 @@ void rungeKuttaMethod(Planet p1,Planet p2, double dt, int n){
 int main()
 {
     // Automatical data export included
-    Planet p1(0,0,0,0,0,0,0,0,0,1) ;
+    Planet p1(0,0,0,-2*M_PI*0.000003,0,0,0,0,0,1) ;
     Planet p2(0,1,0,2*M_PI,0,0,0,0,0,0.000003);
-    //verletalgorithm(p1,p2,0.01,10000);
-    rungeKuttaMethod(p1,p2,0.01,10000);
+    //verletalgorithm(p1,p2,0.01,1000);
+    rungeKuttaMethod(p1,p2,0.01,1000);
 }

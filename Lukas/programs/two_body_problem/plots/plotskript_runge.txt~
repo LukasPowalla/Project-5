@@ -1,5 +1,5 @@
-plot [-3:3][-3:3] "Rungekuttaposition.txt" using 1:2 title "earth" with lines
-replot "Rungekuttaposition.txt" using 3:4 title "sun   " with lines
+plot [-1.1:1.1][-1.1:1.1] "Rungekuttaposition.txt" using 1:2 title "planet2" with lines
+replot "Rungekuttaposition.txt" using 3:4 title "planet1 " with lines
 	set xlabel "x-position" 
  	set ylabel "y-position " 
 	set term png 
