@@ -116,7 +116,7 @@ Many open clusters are unstable and have a small enough mass that the escape vel
 
 The open cluster we simulate in this project will have the starting conditions of a cold collapse. This means, that the particles start with little or no initial velocity. In addition to the that, the $N$ particles, we simulate, will be randomly uniformly distributed at the starting time inside a sphere with given radius $R_0$. Our particles masses will be distributed by a Gaussian distribution around ten solar masses with a standard deviation of one solar mass.
 
-%If the number of particles goes against infinity ($N \to \infty$), the system should collapse into singularity after a time %$\tau_{crunch} = \sqrt{\frac{3\pi}{32 G \rho_0}}$
+
 
 \subsection{Verlet algorithm}
 
@@ -273,6 +273,24 @@ Now we can use the RK4 method $\mathbf{r}$ and $\mathbf{v}$ simultaneously. Beca
 \end{align}
 
 The accelerations can always get calculated by using equation \eqref{eq:gra3}. After the steps of equations \eqref{rc11} to \eqref{rc12} are executed, the velocity and positions of the particles for the time $t_{i+1}$ can be calculated using formula \eqref{rc9}.
+
+\subsection{Units}
+
+An important part of this project was to work with dimensionless units. 
+For the simulation of the solar-system it is reasonable to choose astronomical units as unit for distance, years for time and Solar-masses for mass. This implies that G takes the value of $4 \pi^2$. 
+
+For simulations with n bodies, it is convenient to use solar-masses as units for mass, light-years for units of distance and $\tau_c$ for units of time. 
+\begin{align}
+\tau_c= \sqrt{\frac{3 \pi}{32 G p_0}}
+\end{align}
+This formula determines the gravitational constant:
+\begin{align}
+p_0&=\frac{m_0}{V}\approx \frac{<m> \cdot n}{\frac{4}{3}\pi R_0^3}\\
+\rightarrow G&= \frac{4 \cdot \pi^2 R_0^3}{32 \cdot n \cdot <m>}
+\end{align}
+
+If the number of particles goes against infinity ($N \to \infty$), the system should collapse into singularity after a time $\tau_{crunch} = \sqrt{\frac{3\pi}{32 G \rho_0}}$. 
+
 
 \section{Execution}
 
@@ -720,30 +738,31 @@ $\frac{E_{tot,f}}{E_{tot,i}}$ & 0.99902& 0.99999\\
 \end{tabular}
 \end{table}
 
-\subsubsection{Conclusion of the results of the two-body-system}
-
 We recommend for large time-steps the Verlet-algorithm because the trajectory calculated with Verlet was more stable than the trajectory calculated with RK4-method. 
 For long times, we found out that the RK4-algorithm is a bit more accurate than the Verlet-algorithm. We derived this result from looking at the energy conservation. However, the RK4-algorithm is numerically more expensive than the Verlet-algorithm. Therefore, it could also make sense to run programs with higher numbers of n with the Verlet-algorithm.
 
-\subsection{$N$-body system}
+\subsection{Results of the $N$-body system}
 In fig. \ref{c1}, we plotted the development of the total energy over time in units of the initial total energy $E_0$. It has to be noted that this initial energy has a negative value as it only consists of potential energy! We can see that we get more and more kinetic energy in our system, slowly reaching a positive total energy at $t_\mathrm{crunch}$. Shortly after that, we reach a stable state for our system with $E=-4E_0$.
 
 The particles that get ejected from our system are obviously unbound. That means that the absolute value of the kinetic energy of these unbound particles is higher than the absolute value of the potential energy. As the potential energy has a negative sign, this is equivalent to positive total energy! This makes it very easy to identify the particles that got ejected and aren't in our system any more: We just look for the objects with a positive total energy. The fraction of such particles on the total number of objects in the system is plotted in fig. \ref{d2} as a function of time for three different total numbers of particles in the system. We can see that this percentage obviously increases with time for all sizes of the system until it more or less reaches a stable state. This is obvious as in the beginning where all particles are at rest, none of them can have kinetic energy that is higher than the potential energy, so the first particles get ejected after some time. Just when the system begins to reach a more or less stable state, the crunch sets in. As the objects get very close in this event, many of them get accelerated very fast and the number of unbound particles increases again. An interesting thing that can be observed is that for a higher number of particles in total, the share of unbound ones will set at a higher value! Our explanation for this effect is that if our total number of particles is higher for the same radius of our system, the density of particles is obviously higher. This implies that there is a higher probability of particles 'hitting' each other and therefore getting accelerated very fast.
 
 In fig. \ref{d3}, we can see what the ejection of particles means for the total energy. This plot shows the total energy of the system (again in units of $E_0$) against the number of particles that are not ejected from he system. Every data point in this diagram shows the number of bound particles and the corresponding energy after a time step. We know from the last digram, that the number of bound particles slowly decreases over time. This diagram shows that every time an object gets ejected, the total energy gets closer to $0$, meaning that we lose potential energy and gain kinetic energy. This sounds reasonable as an ejected planet has a high velocity (meaning high kinetic energy), but will soon have a large distance to the remaining system, leading to a very small contribution to the total potential energy.
 \begin{figure}[h]
+\centering
+	\includegraphics[width=0.6\textwidth]{c1.png}
 	\caption{The total energy of the system over time, without smoothing 		function\label{c1}}
-	\includegraphics[width=0.8\textwidth]{c1.png}
-\end{figure}
-\begin{figure}[h]
-	\caption{The fraction of particles with positive energy (=ejected particles) as a function of time, without smoothing factor\label{d2}}
-	\includegraphics[width=0.8\textwidth]{d2.png}
-\end{figure}
-\begin{figure}[h]
-	\caption{Energy of the system vs particles ejected for $N=100$, without smoothing function\label{d3}}
-	\includegraphics[width=0.8\textwidth]{d3.png}
 \end{figure}
 
+\begin{figure}[h]
+\centering
+	\includegraphics[width=0.6\textwidth]{d2.png}
+	\caption{The fraction of particles with positive energy (=ejected particles) as a function of time, without smoothing factor\label{d2}}
+\end{figure}
+\begin{figure}[h]
+\centering
+	\includegraphics[width=0.6\textwidth]{d3.png}
+	\caption{Energy of the system vs particles ejected for $N=100$, without smoothing function\label{d3}}
+\end{figure}
 
 The previous results all show one important problem: We do not really conserve energy, as our system is not really realistic when it comes to small distances between two or more particles. Our objects are actually infinitely small mass points instead of bodies with a finite range like stars or planets! This can lead to serious problems. To demonstrate that, we can just take the case of a system with only $N=2$ particles starting at rest. In our model as well as in reality, those two particles would be accelerated towards each other and gain (negative) potential energy in the same way they gain (positive) kinetic energy; but in reality, those particles would, after some time, collide with each other. However, in our model, these particles will never collide as they have no extent! They can get closer and closer, leading to nearly infinitely high forces. In fact, they could even be at the exact same point in space which would imply an infinite force! Together with the finite, non-zero step length in time, these unrealistically high forces can lead to a velocity of the two stars that is high enough to make them unbound! To avoid this, it seems to be reasonable to introduce a smoothing function that guarantees finite forces even for small distances between the objects. This can be justified by the fact that in reality two extended objects cannot get infinitely close as described above. We set up this smoothing factor according to the project instructions by changing the pure Newtonian force in the following way:
 \begin{equation}
@@ -752,15 +771,22 @@ F_\mathrm{mod}=-\frac{G*M_1*M_2}{r^2+\epsilon^2}
 where $\epsilon$ is a small real constant. We tried many different values of $\epsilon$, ending up with a value of $\epsilon=0.29$ giving us the best energy conservation. To show that, we plotted the total energy of our system again as function of time like we did in fig. \ref{d3}. The new plot in fig.\ref{e1} now looks completely different: We can see that for very short times, we can get high potential energy, but we never reach values lower than the initial energy. Although this diagram covers a time range more than ten times longer than in fig \ref{d3}, we have our energy conserved very well. This is one of the best tests we can implement for our algorithms as we do not have analytical solutions to the $N$-body problem that we can compare our results to! Even the very short peaks in the energy can be explained by our finite step length in time: It can happen that the planets get much closer to each other during one time step while still having the velocity that was calculated based on the force and acceleration of the previous step. As the velocity is somehow \glqq behind\grqq the force in time, we will often observe this behaviour where the potential increases before the velocity (and the kinetic energy) can settle accordingly. That means that we only have long term energy conservation while we can experience some short term peaks due to the finite step length. This long term conservation is delivered very well by our algorithm, justifying our choice of the smoothing factor.
 
 \begin{figure}[h]
-	\caption{The total energy of the system over time, with smoothing 		function\label{e1}}
-	\includegraphics[width=0.8\textwidth]{e1.png}
+\centering
+	\includegraphics[width=0.6\textwidth]{e1.png}
+	\caption{The total energy of the system over time, with smoothing function\label{e1}}
 \end{figure}
 
 An interesting consequence of the newly introduced smoothing function can be seen in fig. \ref{e2}: This is basically the same plot as in fig. \ref{d2}, but now with this new factor. We can see that we now don't have any objects ejected until it comes to the first crunch! After that, many particles get ejected very fast in a way that is very similar to the behaviour that we experienced without smoothing function. Our system seems to be completely stable until it implodes for the first time.
 
 \begin{figure}[h]
+\centering
+	\includegraphics[width=0.6\textwidth]{e2.png}
 	\caption{The fraction of particles with positive energy (=ejected particles) as a function of time, with smoothing factor\label{e2}}
-	\includegraphics[width=0.8\textwidth]{e2.png}
+\end{figure}
+\begin{figure}[h]
+\centering
+	\includegraphics[width=0.6\textwidth]{f1.png}
+	\caption{Energy of the system vs particles ejected for $N=100$, with smoothing function\label{f1}}
 \end{figure}
 
 As mentioned before, there are not many test we can implement in our $N$-body system due to the lack of analytical solutions. We showed that our algorithm is consistent under the aspect of energy conservation and is able to reproduce a stable system until it crunches for the first time. But there is one more test that we can perform: We can check whether our program is able to validate the virial theorem. This theorem states the following equation for the averages over time of kinetic energy $<K>$ and potential energy $<V>$:
@@ -769,12 +795,23 @@ As mentioned before, there are not many test we can implement in our $N$-body sy
 \end{equation}
 We plotted the development of the ratio $<V>/<K>$ over time for one system in fig. \ref{f1}. We can clearly see that after a long time, we reach a stable state at $-2$. This is exactly the result that we expected through the virial theorem. This also underlines the exactness of the algorithm.
 
-\begin{figure}[h]
-	\caption{Energy of the system vs particles ejected for $N=100$, with smoothing function\label{f1}}
-	\includegraphics[width=0.8\textwidth]{f1.png}
-\end{figure}
 
+
+\clearpage
 \section{Discussion}
+
+We set up two algorithms for solving n-body problems in space. As a first step, we used those algorithms to simulate different types of two-body-problems. This was a good test for the properties of our algorithms since it has well known analytical solutions. 
+The RK4-algorithm has the same precision for position and velocity whereas the Velocity-Verlet-algorithm has the same precision for position as the RK4-algorithm but is less precise for velocity. Therefore, RK4 has in theory the better precision. However, the RK4-algorithm is more sensitive to changing the time steps. That means that Velocity-Verlet is more stable. The stability of RK4-algorithm depends on the step length, but can get better precision if it is stable. In our results for the two body problem, where we compared both methods, we could nevertheless see no big difference between both methods. RK4 was only slightly better in conserving the energy of our systems.
+Even though RK4 is a bit better here, we chose to use Velocity-Verlet-algorithm for further calculations as it is numerically cheaper. 
+We simulated the $n$-body system for different numbers of $n$ with the Velocity-verlet-method. 
+In general, we get for $n$ bodies a first collapse of the system at $\tau=1$.(not to a singularity, but all particles are distributed very close to each other) After that, we can see a highly damped periodic bouncing of the planet cluster resulting in an equilibrium-state. We also looked at the energy-conservation of the algorithm. Until that point, we did not conserve energy until we reached that (more or less) stable state.
+We observed that our algorithm could not simulate the situation where particles get very close to each other. This is due the fact that our particles do not have a finite extent. Therefore, we cannot simulate collisions. To avoid this, we introduced a smoothing function in the gravitational force. This is a very brute-force way of fixing this problem. It would be more elegant but much more inconvenient and numerically more expensive to introduce an algorithm that uses non fixed step-length for the time. These time-steps could be adapted in a way that the accuracy is increased every time when two particles get too close.
+After implementing the smoothing function, our algorithm was able to reproduce energy conservation even for a system with a high number of particles.
+We could differ between bound and not-bound particles by looking whether the kinetic energy of a particle is bigger or smaller than the potential energy of the particle. Moreover, we implemented a method which checks whether our algorithm holds the Virial theorem or not. 
+In addition to that, we calculated the center of mass and analysed the radial density of the particles in equilibrium state for different numbers of $n$. We could see that we could derive the physics of a system with an infinite number of particles also with a relatively small number of particles.
+
+\section{Conclusion}
+It is good to remind ourselves of the initial problem that we dealt with in order to be able to write a final conclusion of this project. We were looking for a way to gain information over clusters of bodies in space as we do not have analytical solutions for this situation and can not observe these systems long enough. We showed that simulations are a good way to collect information about these cases, as the algorithms we used were able validate the most important theorems. We think that simulations of this kind, even with a relatively small number of particles, can be a helpful way to get a better understanding of particle systems at a large scale if you include some improvements: The algorithms used should include a non-fixed step length in time as mentioned above to deal with the problems occurring due to small distances and should be optimized for higher speed to still get reasonable computation times for the simulations.
 
 \section{Source code}
 
