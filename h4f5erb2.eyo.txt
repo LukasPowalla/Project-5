@@ -1,0 +1,20 @@
+﻿new graphes
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# Your branch is up-to-date with 'origin/master'.
+#
+# Changes to be committed:
+#	new file:   Richard/plots/3dplot1.png
+#	new file:   Richard/plots/3dplot3.png
+#	new file:   Richard/plots/3dplot4.png
+#	modified:   Richard/plots/Thumbs.db
+#	modified:   Richard/plots/c1.png
+#	modified:   Richard/plots/d2.png
+#	modified:   Richard/plots/d3.png
+#	modified:   Richard/plots/e1.png
+#	modified:   Richard/plots/e2.png
+#	modified:   Richard/plots/f1.png
+#
+
