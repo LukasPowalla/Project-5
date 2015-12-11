@@ -30,9 +30,16 @@
 \newpage
 
 \begin{abstract}
-This report by Richard Absah, Vincent Noculak, Lukas Powalla and Johannes Scheller for the course "FYS3150/4150 - Computational Physics" at the Universitetet i Oslo deals with the computational simulation of a galaxy model. It contains different approaches on solving the differential equations resulting from Newton's law of universal gravitation for objects (e.g. stars) in space. The authors will introduce two algorithms, Velocity Verlet and Runge-Kutta, to solve these differential equations and show both of them in use. They will compare there advantages and disadvantages and finally justify their chose of using Velocity Verlet to simulate n-body system like galaxies. These simulations are used to obtain knowledge about the behaviour of large particle clusters in space, esp. about the collapses these structures perform. Moreover, the authors try to prove powerful statements like the virial theorem by their simulations. The paper ends with an discussion about the future use of the methods use, but also about the problems that occurred during the project. Thus, it will give a small outlook on the limits of the algorithms for future use.
+This report by Richard Absah, Vincent Noculak, Lukas Powalla and Johannes Scheller for the course "FYS3150/4150 - Computational Physics" at the Universitetet i Oslo deals with the computational simulation of a galaxy model. It contains different approaches on solving the differential equations resulting from Newton's law of universal gravitation for objects (e.g. stars) in space. The authors will introduce two algorithms, Velocity Verlet and Runge-Kutta, to solve these differential equations and show both of them in use. They will compare their advantages and disadvantages and finally justify their choice of using Velocity Verlet to simulate n-body system like galaxies. These simulations are used to obtain knowledge about the behaviour of large particle clusters in space, esp. about the collapses these structures perform. Moreover, the authors try to prove powerful statements like the virial theorem by their simulations. The paper ends with an discussion about the future use of the methods use, but also about the problems that occurred during the project. Thus, it will give a small outlook on the limits of the algorithms for future use.
 \end{abstract}
 \section{Introduction}
+When people observe stellar objects like stars or even bigger structures, i.e. galaxies or clusters of galaxies, they soon run into trouble. Despite the fact that many observations by telescopes - no matter with which wavelength they operate - have a very limited accuracy, it is just not possible to obtain precise knowledge about the long term evolution of the motions of these objects and structures in a single lifetime. Even if the first humans had started with exact observations of all the objects they could see, the data collected by theme would be young compared to the lifespan of a galaxy!
+
+On the other hand, we have not found yet analytical solutions for the movements of more than two interacting bodies apart from some special cases with three bodies. As a result of this dilemma - we cannot observe the long-term motion of large stellar systems, but we cannot solve describe them analytically either -, we have to focus on computational simulations of these problems. This is what we are going to try in this project.
+
+In particular, we are going to simulate first two body systems and later on open clusters using Newton's law of universal gravitation. We are going to look at the time an open cluster with a cold collapse would need to collapse into singularity and observe the energy conservation and distribution of potential and kinetic energy. On what properties does it depend how many particles get ejected from the cluster and how do those particles change the energy of the system? The equilibrium state and its radial partial density are going to be observed too.
+
+We are doing these simulations by using both the Velocity Verlet algorithm and the fourth order Runge-Kutta method. First, we are going to compare both algorithms by simulating a to body system. Then we are going to study which algorithm is more suitable for simulating open clusters and continue with these simulations using the algorithm that turned out to be better.
 \section{Theory}
 
 \subsection{Newton's law of universal gravitation}
@@ -373,7 +380,7 @@ void solarsystem::addrandomplanet(){
 }
 \end{lstlisting}
 
-To use the matrix-representation of position and velocity, we wrote the function setmatrices(), which constructs a martix A, which contains all positions and velocities of the planets, which has been added to the system so far. The position of the planets can be found in the first column and the velocity in the second column. Every planet has 3 Space-Coordinates and 3 Velocity-Coordinates. In addition to that, setmatrices() constructs the matrix dA, which is the derivative of the matrix A. This means that in the first column are velocities and in the second column are accelerations. For RK4, this is really useful because we can perform very understandable operations like $A=A+dA \cdot dt $.
+To use the matrix-representation of position and velocity, we wrote the function setmatrices(), which constructs a martix A, which contains all positions and velocities of the planets, which has been added to the system so far. The position of the planets can be found in the first column and the velocity in the second column. Every planet has 3 Space-Coordinates and 3 Velocity-Coordinates. In addition to that, setmatrices() constructs the matrix dA, which is the time derivative of the matrix A. This means that in the first column are velocities and in the second column are accelerations. For RK4, this is really useful because we can perform very understandable operations like $A=A+dA \cdot dt $.
 Notice, that the velocity sits in the second column of A as well as in the first column of dA.
 \begin{align}
 A=
@@ -534,12 +541,124 @@ mat solarsystem::derivate( Mat<double> B){
     return(dC);//return dC with velocity from B and new acceleration
 }
 \end{lstlisting}
+\subsection{Additional methods}
+In order to analyse our data we need to find the potential energy and the kinetic energy at a given time $t$. Down here is the void function \emph{KinpotEnergy} which calculates both the kinetic and potential energy for each particle. When ever this function is called in our RK4 or verlet method it calculates these values for one time step.
+\begin{lstlisting}
+kineticEnergy <vector> //where we store each particle kinetic energy 
+potentialEnergy <vector> //where we store each particle potential energy 
+
+theTotalEnergy // where we store the total energy for all particles
+total_kin // where we store the total kinetic energy only for the particles in system
+total_pot // where we store the total potential energy only for the particles in system
+numplanetsInSystem // the number of particles still in the system
+ergodic //the value of ergodic ratio 
+\end{lstlisting}
+
+\begin{lstlisting}
+void solarsystem::kinPotEnergy(){
+
+kineticEnergy = new double[ this->numplanets];
+total_kin = 0.0;
+total_pot = 0.0;
+
+double potenial = 0.0;
+double totalKinetic = 0.0;
+double totalPotenial = 0.0;
+double velocitySquared= 0.0;
+
+//kineticEnergy = 1/2 * m * v^2
+for (int i = 0; i < this->numplanets;i++){
+velocitySquared = A(3*i,1)*A(3*i,1)+A(3*i+1,1)*A(3*i+1,1)+A(3*i+2,1)*A(3*i+2,1);
+kineticEnergy[i] = 0.5*planets[i].m*velocitySquared;
+
+totalKinetic += kineticEnergy[i];
+}
+
+//potineal energy U = -G Mm/r----------------
+potentialEnergy = new double[ this->numplanets];
+double r;
+Mat<double> p = Mat<double>(this->numplanets,this->numplanets,fill::zeros); //matrix p will include the potenail form all planets.
+
+for (int i = 0;i < this->numplanets; i++ ){
+for (int j = i+1; j < this->numplanets; j++){
+r = (A(3*i,0)- A(3*j,0))*(A(3*i,0)- A(3*j,0)) + (A(3*i+1,0)- A(3*j+1,0))*(A(3*i+1,0)- A(3*j+1,0))+(A(3*i+2,0)- A(3*j+2,0))*(A(3*i+2,0)- A(3*j+2,0));
+r = sqrt(r);
+p(i,j)=-planets[i].m*planets[j].m*G/r;
+p(j,i)=p(i,j);
+totalPotenial += p(j,i);
+}
+}
+//calcuting the potenial energy for each planet from the marix P
+for(int i = 0; i < this->numplanets; i++){
+for(int j = 0; j < this->numplanets; j++){
+potenial += p(i,j);
+}
+potentialEnergy[i] = potenial;
+potenial = 0;
+}
+theTotalEnergy = totalKinetic+totalPotenial;
+
+//Virial analysis
+numplanetsInSystem = 0;
+
+//clac the energy of the bound system ! virial !!!
+for (int i = 0;i < this->numplanets; i++ ){
+if (( kineticEnergy[i]+potentialEnergy[i])<0.0){
+numplanetsInSystem += 1;
+total_kin += kineticEnergy[i];
+total_pot += potentialEnergy[i];
+}
+
+}
+total_pot = total_pot/2;
+ergodic = total_pot/total_kin;
+}
+\end{lstlisting}
+In the first part of the function, we calculate the kinetic energy for each particle as $1 \frac{1}{2}m v(t)^2 $
+
+In the second part, we calculate all the potentials between different particles in a matrix p in the following way:
+
+\begin{align}
+p=
+\begin{bmatrix}
+0 & \frac{-Gm_1m_0}{r} & \frac{-Gm_2m_0}{r} & ... & \frac{-Gm_nm_0}{r}  \\
+\frac{-Gm_0m_1}{r} & 0 & \frac{-Gm_2m_1}{r} & ... & \frac{-Gm_nm_1}{r}  \\
+... & ... & ... & ... & ... \\
+\frac{-Gm_0m_n}{r} & \frac{-Gm_1m_n}{r} & \frac{-Gm_2m_n}{r} & ... & 0  \\
+\end{bmatrix}
+\end{align} 
+Afterwards, we perform a new for loop, where we calculate the potential energy for a particle $i$ as the sum over al elements of the $i$th row, and finally calculate the total potential and kinetic of the system by summing only over the bounded particle by using an if test to get only the particles with negative total energy.
+
+In the method \emph{centermassfunction}, we calculate the centre of mass $\mathbf{r}_c$ of the system. We loop over all bounded particles $\mathbf{r}_c = \frac{\sum\limits_{i=1}^n m_i*\mathbf{r}_i}{m_\mathrm{total}}$
+\begin{lstlisting} 
+void solarsystem::centermassfunction(){
+centermass = new double[3];//(centrMassX,centerMassY,centerMassZ)
+double centermassX = 0.0;
+double centermassY = 0.0;
+double centermassZ = 0.0;
+double totalmass = 0.0;
+for (int i = 0;i<this->numplanets;i++){
+if (( kineticEnergy[i]+potentialEnergy[i])<0.0){
+totalmass  += planets[i].m;
+centermassX += A(3*i,0)*planets[i].m;
+centermassY += A(3*i+1,0)*planets[i].m;
+centermassZ += A(3*i+2,0)*planets[i].m;
+}
+}
+centermassX = centermassX/totalmass;
+centermassY = centermassY/totalmass;
+centermassZ = centermassZ/totalmass;
+centermass[0] = centermassX;
+centermass[1] = centermassY;
+centermass[2] = centermassZ;
+}
+\end{lstlisting}
 \clearpage
 \section{Results}
 
 \subsection{Results of the two-body-system}
 
-We first test our two body algorithm with well known systems in order to check whether we can reproduce our predictions. We simulate the earth and the sun. With Velocityverlet (Verlet), we get figure \ref{TWOB_earth-sun-Verlet} and with Rung Kutta method (RK4), we get figure \ref{TWOB_earth-sun-RK4}. Both trajectories fit to what we expect from the system. We see a circular motion. We can't see a qualitative difference of the two calculated trajectories. 
+We first test our two body algorithm with well known systems in order to check whether we can reproduce our predictions. We simulate the earth and the sun. With Velocity Verlet algorithm, we get figure \ref{TWOB_earth-sun-Verlet} and with the forth order Runge Kutta method (RK4), we get figure \ref{TWOB_earth-sun-RK4}. Both trajectories fit to what we expect from the system. We see a circular motion. We can't see a qualitative difference of the two calculated trajectories. 
 Next, we test our two-body solver with a bit more complicated initial conditions. The initial conditions can be looked up in the figures itself. We get for Verlet the figure \ref{TWOB_Verlet_example} and for RK4 the figure \ref{TWOB_RK4_example}. We get the qualitative correct movement of both planets and we can't see qualitative differences of the two solvers. 
 
 
@@ -601,10 +720,59 @@ $\frac{E_{tot,f}}{E_{tot,i}}$ & 0.99902& 0.99999\\
 \end{tabular}
 \end{table}
 
-\subsection{Conclusion of the results of the two-body-system}
+\subsubsection{Conclusion of the results of the two-body-system}
 
 We recommend for large time-steps the Verlet-algorithm because the trajectory calculated with Verlet was more stable than the trajectory calculated with RK4-method. 
 For long times, we found out that the RK4-algorithm is a bit more accurate than the Verlet-algorithm. We derived this result from looking at the energy conservation. However, the RK4-algorithm is numerically more expensive than the Verlet-algorithm. Therefore, it could also make sense to run programs with higher numbers of n with the Verlet-algorithm.
+
+\subsection{$N$-body system}
+In fig. \ref{c1}, we plotted the development of the total energy over time in units of the initial total energy $E_0$. It has to be noted that this initial energy has a negative value as it only consists of potential energy! We can see that we get more and more kinetic energy in our system, slowly reaching a positive total energy at $t_\mathrm{crunch}$. Shortly after that, we reach a stable state for our system with $E=-4E_0$.
+
+The particles that get ejected from our system are obviously unbound. That means that the absolute value of the kinetic energy of these unbound particles is higher than the absolute value of the potential energy. As the potential energy has a negative sign, this is equivalent to positive total energy! This makes it very easy to identify the particles that got ejected and aren't in our system any more: We just look for the objects with a positive total energy. The fraction of such particles on the total number of objects in the system is plotted in fig. \ref{d2} as a function of time for three different total numbers of particles in the system. We can see that this percentage obviously increases with time for all sizes of the system until it more or less reaches a stable state. This is obvious as in the beginning where all particles are at rest, none of them can have kinetic energy that is higher than the potential energy, so the first particles get ejected after some time. Just when the system begins to reach a more or less stable state, the crunch sets in. As the objects get very close in this event, many of them get accelerated very fast and the number of unbound particles increases again. An interesting thing that can be observed is that for a higher number of particles in total, the share of unbound ones will set at a higher value! Our explanation for this effect is that if our total number of particles is higher for the same radius of our system, the density of particles is obviously higher. This implies that there is a higher probability of particles 'hitting' each other and therefore getting accelerated very fast.
+
+In fig. \ref{d3}, we can see what the ejection of particles means for the total energy. This plot shows the total energy of the system (again in units of $E_0$) against the number of particles that are not ejected from he system. Every data point in this diagram shows the number of bound particles and the corresponding energy after a time step. We know from the last digram, that the number of bound particles slowly decreases over time. This diagram shows that every time an object gets ejected, the total energy gets closer to $0$, meaning that we lose potential energy and gain kinetic energy. This sounds reasonable as an ejected planet has a high velocity (meaning high kinetic energy), but will soon have a large distance to the remaining system, leading to a very small contribution to the total potential energy.
+\begin{figure}[h]
+	\caption{The total energy of the system over time, without smoothing 		function\label{c1}}
+	\includegraphics[width=0.8\textwidth]{c1.png}
+\end{figure}
+\begin{figure}[h]
+	\caption{The fraction of particles with positive energy (=ejected particles) as a function of time, without smoothing factor\label{d2}}
+	\includegraphics[width=0.8\textwidth]{d2.png}
+\end{figure}
+\begin{figure}[h]
+	\caption{Energy of the system vs particles ejected for $N=100$, without smoothing function\label{d3}}
+	\includegraphics[width=0.8\textwidth]{d3.png}
+\end{figure}
+
+
+The previous results all show one important problem: We do not really conserve energy, as our system is not really realistic when it comes to small distances between two or more particles. Our objects are actually infinitely small mass points instead of bodies with a finite range like stars or planets! This can lead to serious problems. To demonstrate that, we can just take the case of a system with only $N=2$ particles starting at rest. In our model as well as in reality, those two particles would be accelerated towards each other and gain (negative) potential energy in the same way they gain (positive) kinetic energy; but in reality, those particles would, after some time, collide with each other. However, in our model, these particles will never collide as they have no extent! They can get closer and closer, leading to nearly infinitely high forces. In fact, they could even be at the exact same point in space which would imply an infinite force! Together with the finite, non-zero step length in time, these unrealistically high forces can lead to a velocity of the two stars that is high enough to make them unbound! To avoid this, it seems to be reasonable to introduce a smoothing function that guarantees finite forces even for small distances between the objects. This can be justified by the fact that in reality two extended objects cannot get infinitely close as described above. We set up this smoothing factor according to the project instructions by changing the pure Newtonian force in the following way:
+\begin{equation}
+F_\mathrm{mod}=-\frac{G*M_1*M_2}{r^2+\epsilon^2}
+\end{equation}
+where $\epsilon$ is a small real constant. We tried many different values of $\epsilon$, ending up with a value of $\epsilon=0.29$ giving us the best energy conservation. To show that, we plotted the total energy of our system again as function of time like we did in fig. \ref{d3}. The new plot in fig.\ref{e1} now looks completely different: We can see that for very short times, we can get high potential energy, but we never reach values lower than the initial energy. Although this diagram covers a time range more than ten times longer than in fig \ref{d3}, we have our energy conserved very well. This is one of the best tests we can implement for our algorithms as we do not have analytical solutions to the $N$-body problem that we can compare our results to! Even the very short peaks in the energy can be explained by our finite step length in time: It can happen that the planets get much closer to each other during one time step while still having the velocity that was calculated based on the force and acceleration of the previous step. As the velocity is somehow \glqq behind\grqq the force in time, we will often observe this behaviour where the potential increases before the velocity (and the kinetic energy) can settle accordingly. That means that we only have long term energy conservation while we can experience some short term peaks due to the finite step length. This long term conservation is delivered very well by our algorithm, justifying our choice of the smoothing factor.
+
+\begin{figure}[h]
+	\caption{The total energy of the system over time, with smoothing 		function\label{e1}}
+	\includegraphics[width=0.8\textwidth]{e1.png}
+\end{figure}
+
+An interesting consequence of the newly introduced smoothing function can be seen in fig. \ref{e2}: This is basically the same plot as in fig. \ref{d2}, but now with this new factor. We can see that we now don't have any objects ejected until it comes to the first crunch! After that, many particles get ejected very fast in a way that is very similar to the behaviour that we experienced without smoothing function. Our system seems to be completely stable until it implodes for the first time.
+
+\begin{figure}[h]
+	\caption{The fraction of particles with positive energy (=ejected particles) as a function of time, with smoothing factor\label{e2}}
+	\includegraphics[width=0.8\textwidth]{e2.png}
+\end{figure}
+
+As mentioned before, there are not many test we can implement in our $N$-body system due to the lack of analytical solutions. We showed that our algorithm is consistent under the aspect of energy conservation and is able to reproduce a stable system until it crunches for the first time. But there is one more test that we can perform: We can check whether our program is able to validate the virial theorem. This theorem states the following equation for the averages over time of kinetic energy $<K>$ and potential energy $<V>$:
+\begin{equation}
+2<K>=-<V>
+\end{equation}
+We plotted the development of the ratio $<V>/<K>$ over time for one system in fig. \ref{f1}. We can clearly see that after a long time, we reach a stable state at $-2$. This is exactly the result that we expected through the virial theorem. This also underlines the exactness of the algorithm.
+
+\begin{figure}[h]
+	\caption{Energy of the system vs particles ejected for $N=100$, with smoothing function\label{f1}}
+	\includegraphics[width=0.8\textwidth]{f1.png}
+\end{figure}
 
 \section{Discussion}
 
@@ -612,6 +780,7 @@ For long times, we found out that the RK4-algorithm is a bit more accurate than 
 
 \begin{thebibliography}{mustermarke}
 \bibitem[1]{Link1} Source: \url{https://en.wikipedia.org/wiki/Open_cluster}, date: 10.12.2015 time: 17:00
-\bibitem[2]{Link2} 
+\bibitem[2]{Link2} M. Joyce, B. Marcos, and F. Sylos Labini, Cold uniform spherical collapse revisited,
+AIP Conf. Proc. 1241, 955 (2010);
 \end{thebibliography}
 \end{document}
