@@ -1,0 +1,21 @@
+fid=fopen('kinPotVerlet200.txt')
+    s = textscan(fid,'%f %f %f %f')
+fclose(fid)
+
+x=s{1};
+y=s{2};
+z=s{3};
+k=s{4};
+z=z/z(1);
+x=x/1000;
+
+hold on
+plot(x,z);
+
+
+xlabel('particles ejected form the system')
+ylabel('E/E_0','Rotation',90)
+
+xlabel('t/t_{crunch}')
+legend()
+%title('enery of the system vs particles ejected form the system with N = 100')
